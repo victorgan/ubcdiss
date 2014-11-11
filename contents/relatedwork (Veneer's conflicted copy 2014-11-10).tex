@@ -1,0 +1,91 @@
+% ====================
+\chapter{Related Work}
+% ====================
+
+% ====================
+\section{Online RGB Trackers}
+% ====================
+Survey papers:
+\begin{enumerate}
+\item \textbf{Pang et al's Survey} \cite{pang2013finding} notes biases in comparisons: usually new papers list their method as the best (because of a specific methodology); however second best paper rankings are fairly robust. A meta-analysis concludes the following methods are competitive: Struck, MIL, TLD, VTD. 
+\item \textbf{an extensive PAMI Survey} \cite{smeulders2013visual} claims Struck is the best, and analyses specific failure cases and how it affects specific method
+\item \textbf{Appearance Model Survey} \cite{li2013survey}
+\item A comprehensive list of papers can be found by searching papers that have referenced Struck; which is the most frequently used benchmark to compare against.
+\item \textbf{Visual Tracking Benchmark}\cite{kristan2013visual} 
+\item Wu et. al \cite{wu2013online} (SCM, Struck, TLD, ASLA, CXT, VTD, VTS, CSK)
+concludes
+    \begin{enumerate}
+    \item \textbf{Background Information}  background
+    information is critical for effective tracking. It can be ex-
+    ploited by using advanced learning techniques to encode
+    the background information in the discriminative model im-
+    plicitly (e.g., Struck), or serving as the tracking contex-
+    t explicitly (e.g., CXT)
+    \item \textbf{local models}  are important for tracking as shown in the performance improvement
+    of local sparse representation (e.g., ASLA and SCM) com-
+    pared with the holistic sparse representation (e.g., MTT and
+    L1APG). They are particularly useful when the appearance
+    of target is partially changed, such as partial occlusion or
+    deformation.
+    \item \textbf{local models} motion model or dynamic model is cru-
+    cial for object tracking, especially when the motion of target
+    is large or abrupt. However, most of our evaluated tracker-
+    s do not focus on this component. Good location predic-
+    tion based on the dynamic model could reduce the search
+    range and thus improve the tracking efficiency and robust-
+    ness.
+    \end{enumerate}
+\end{enumerate}
+
+% --------------------
+\subsection{Pre-CVPR 2013 Trackers}
+% --------------------
+\paragraph{Online RGB Trackers} require no prior knowledge of the object, and only a bounding box of the target on the original frame. 
+A survey of tracking methods \cite{wu2013online} (SCM, Struck, TLD, ASLA, CXT, VTD, VTS, CSK), as well as papers following the survey \cite{supancic2013self}, show the following methods are competitive for this problem:
+\begin{enumerate}
+\item \textbf{Struck} \cite{hare2011struck}  uses a kernelized structured output SVM to directly learn displacement vectors. Gaussian kernel on 192 haar-like features. 
+\item \textbf{SCM} \cite{zhong2012robust} 
+\item \textbf{TLD} \cite{kalal2012tracking} "We develop a novel learning method (P-N learning) which estimates the
+errors by a pair of “experts”: (i) P-expert estimates missed detections, and (ii) N-expert estimates false alarms. The learning process is
+modeled as a discrete dynamical system and the conditions under which the learning guarantees improvement are found. We describe
+our real-time implementation of the TLD framework and the P-N learning.
+
+\item \textbf{APG-L1} \cite{bao2012real} "l1 norm related minimization model".
+\item \textbf{MIL} \cite{babenko2009visual} Older well-known tracker using multiple instance learning.
+\item \textbf{CXT} \cite{dinh2011context} uses background context
+\item \textbf{ASLA} \cite{jia2012visual} 
+\item \textbf{Circulant} \cite{henriques2012exploiting} uses fourier transformed graham matrix to improve  The fastest tracker in \cite{wu2013online}.
+\end{enumerate}
+
+
+% --------------------
+\subsection{Post-CVPR 2013 Trackers}
+% --------------------
+After Wu et. al's  survey \cite{wu2013online}, the following notable methods were also published:
+
+\begin{enumerate}
+\item \textbf{Self-paced learning} \cite{supancic2013self} "we show that an accurate appearance model is considerably more effective than a strong motion model". 
+\item \textbf{MEEM} \cite{zhang2014meem} claims state-of-the-art over Struck, SCM, MIL.
+\item \textbf{Xiang} \cite{xiang2014monocular}
+\item \textbf{Occlusion and motion reasoning for long-term tracking} \cite{hua2014occlusion} "Struck fails in
+the presence of long-term occlusions as well as severe viewpoint changes
+of the object. In this paper we propose a principled way to combine occlusion and motion reasoning with a tracking-by-detection approach."
+\end{enumerate}
+
+% =============================================
+\section{Online RGB-D Trackers}
+\label{sec:relatedwork}
+% =============================================
+\paragraph{Online RGB-D Trackers} no prior knowledge of the object.
+Song et. al's survey \cite{song2013tracking}, show \textbf{incorporating depth into tracking beats the state of the art.} It shows \textbf{Struck} \cite{hare2011struck} and VTD are competitive.
+
+\paragraph{Gaussian Process Regression} \cite{gao2014transfer} 
+
+Structured prediction is used in temporal data such as speech recognition. This
+has yet to fully permeate object tracking in videos.
+
+RGB-D videos provide a unique set of data to images. Objects are more easily
+segmented based on depth data (without transformation) alone. This can be seen
+in LIDAR \cite{morton2013multi}.
+
+It is often the case that 
