@@ -1,4 +1,36 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template for a UBC-compliant dissertation
+% At the minimum, you will need to change the information found
+% after the "Document meta-data"
+%
+%!TEX TS-program = pdflatex
+%!TEX encoding = UTF-8 Unicode
 
+%% The ubcdiss class provides several options:
+%%   gpscopy (aka fogscopy)
+%%       set parameters to exactly how GPS specifies
+%%         * single-sided
+%%         * page-numbering starts from title page
+%%         * the lists of figures and tables have each entry prefixed
+%%           with 'Figure' or 'Table'
+%%       This can be tested by `\ifgpscopy ... \else ... \fi'
+%%   10pt, 11pt, 12pt
+%%       set default font size
+%%   oneside, twoside
+%%       whether to format for single-sided or double-sided printing
+%%   balanced
+%%       when double-sided, ensure page content is centred
+%%       rather than slightly offset (the default)
+%%   singlespacing, onehalfspacing, doublespacing
+%%       set default inter-line text spacing; the ubcdiss class
+%%       provides \textspacing to revert to this configured spacing
+%%   draft
+%%       disable more intensive processing, such as including
+%%       graphics, etc.
+%%
+
+% For submission to GPS
+\documentclass[gpscopy,onehalfspacing,11pt]{ubcdiss}
 % For your own copies (looks nicer)
 % \documentclass[balanced,twoside,11pt]{ubcdiss}
 
@@ -250,23 +282,22 @@
 %% Document meta-data: be sure to also change the \hypersetup information
 %%
 
-\title{On the Use of the \texttt{ubcdiss} Template}
+\title{Master's Thesis Draft}
 %\subtitle{If you want a subtitle}
 
-\author{Johnny Canuck}
-\previousdegree{B. Basket Weaving, University of Illustrious Arts, 1991}
-\previousdegree{M. Silly Walks, Another University, 1994}
+\author{Victor Gan}
+\previousdegree{BSc, University of Waterloo, 2013}
 
 % What is this dissertation for?
-\degreetitle{Doctor of Philosophy}
+\degreetitle{Master of Science}
 
 \institution{The University Of British Columbia}
 \campus{Vancouver}
 
-\faculty{The Faculty of XXX}
-\department{Basket Weaving}
+\faculty{The Faculty of Science}
+\department{Computer Science}
 \submissionmonth{April}
-\submissionyear{2192}
+\submissionyear{2015}
 
 %% hyperref package provides support for embedding meta-data in .PDF
 %% files
@@ -282,14 +313,10 @@
 %% The document content
 %%
 
-%% LaTeX's \includeonly commands causes any uses of \include{} to only
-%% include files that are in the list.  This is helpful to produce
-%% subsets of your thesis (e.g., for committee members who want to see
-%% the dissertation chapter by chapter).  It also saves time by 
-%% avoiding reprocessing the entire file.
-%\includeonly{intro,conclusions}
-%\includeonly{discussion}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% From Thesis Components: Tradtional Thesis
 %% <http://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/order-components>
+
+\usepackage{csquotes} % For \blockquote

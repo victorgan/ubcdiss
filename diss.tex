@@ -1,51 +1,10 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Template for a UBC-compliant dissertation
-% At the minimum, you will need to change the information found
-% after the "Document meta-data"
-%
-%!TEX TS-program = pdflatex
-%!TEX encoding = UTF-8 Unicode
-
-%% The ubcdiss class provides several options:
-%%   gpscopy (aka fogscopy)
-%%       set parameters to exactly how GPS specifies
-%%         * single-sided
-%%         * page-numbering starts from title page
-%%         * the lists of figures and tables have each entry prefixed
-%%           with 'Figure' or 'Table'
-%%       This can be tested by `\ifgpscopy ... \else ... \fi'
-%%   10pt, 11pt, 12pt
-%%       set default font size
-%%   oneside, twoside
-%%       whether to format for single-sided or double-sided printing
-%%   balanced
-%%       when double-sided, ensure page content is centred
-%%       rather than slightly offset (the default)
-%%   singlespacing, onehalfspacing, doublespacing
-%%       set default inter-line text spacing; the ubcdiss class
-%%       provides \textspacing to revert to this configured spacing
-%%   draft
-%%       disable more intensive processing, such as including
-%%       graphics, etc.
-%%
-
-% For submission to GPS
-\documentclass[gpscopy,onehalfspacing,11pt]{ubcdiss}
-% For your own copies (looks nicer)
-% \documentclass[balanced,twoside,11pt]{ubcdiss}
-
 \input{contents/topmatter}
 
-%% And include some of our own useful macros
-\input{macros}
+\input{macros} % Template's macros
 
-%% LaTeX's \includeonly commands causes any uses of \include{} to only
-%% include files that are in the list.  This is helpful to produce
-%% subsets of your thesis (e.g., for committee members who want to see
-%% the dissertation chapter by chapter).  It also saves time by 
-%% avoiding reprocessing the entire file.
-%\includeonly{intro,conclusions}
-\includeonly{contents/intro,contents/relatedwork,contents/problemdefinition,contents/experiments}
+% \includeonly to limit which \include{}'s to insert
+% \includeonly{intro,conclusions}
+% \includeonly{contents/intro,contents/relatedwork,contents/problemdefinition,contents/experiments}
 
 \begin{document}
 
@@ -64,19 +23,19 @@
 % \include{contents/preface}
 % \cleardoublepage
 % 
-% %    4. Table of contents (mandatory - list all items in the preliminary pages
-% %    starting with the abstract, followed by chapter headings and
-% %    subheadings, bibliographies and appendices)
-% \tableofcontents
-% \cleardoublepage	% required by tocloft package
-% 
-% %    5. List of tables (mandatory if thesis has tables)
-% \listoftables
-% \cleardoublepage	% required by tocloft package
-% 
-% %    6. List of figures (mandatory if thesis has figures)
-% \listoffigures
-% \cleardoublepage	% required by tocloft package
+%    4. Table of contents (mandatory - list all items in the preliminary pages
+%    starting with the abstract, followed by chapter headings and
+%    subheadings, bibliographies and appendices)
+\tableofcontents
+\cleardoublepage	% required by tocloft package
+
+%    5. List of tables (mandatory if thesis has tables)
+\listoftables
+\cleardoublepage	% required by tocloft package
+
+%    6. List of figures (mandatory if thesis has figures)
+\listoffigures
+\cleardoublepage	% required by tocloft package
 % 
 % %    7. List of illustrations (mandatory if thesis has illustrations)
 % %    8. Lists of symbols, abbreviations or other (optional)
@@ -104,11 +63,14 @@
 
 % --------------------
 %    2. Main body
-% ---------------contents/problemdefinition-----
-% Generally recommended to put each chapter into a separate file
+% --------------------
 
 % --------------------
 \include{contents/problemdefinition}
+% --------------------
+
+% --------------------
+\include{contents/relatedwork}
 % --------------------
 
 % --------------------
@@ -119,9 +81,7 @@
 \include{contents/experiments}
 % --------------------
 
-% --------------------
-\include{contents/relatedwork}
-% --------------------
+
 
 %\include{model}
 %\include{impl}
@@ -146,6 +106,7 @@
 %       Ethics Board's Certificates of Approval)
 %\include{reb-coa}	% pdfpages is useful here
 % --------------------
+\include{contents/meta}
 \include{contents/appendix}
 
 % --------------------
@@ -157,4 +118,3 @@
 
 
 \end{document}
-gt
