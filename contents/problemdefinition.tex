@@ -1,5 +1,122 @@
 % ====================
-\chapter{Problem Definition}
+\chapter{The Problem}
 % ====================
 
+% ====================
+\section*{PURPOSE}
+% ====================
+\begin{itemize}
+\item 1 page
+\end{itemize}
 
+
+% ====================
+\section{Specific Problem}
+% ====================
+List of specific problems I might tackle:
+\begin{enumerate}
+\item Is depth in tracking worth it? Can I blow online tracking out of the water?
+\item Unsupervised tracklets, which also beats state-of-art tracking. T-by-D: input patch, output detection. Struck: input patch, output displacement. New: input video, output tracks, and formulate objective function to minimize error on this directly (through structured SVM?).
+\item Is it possible to track purely using depth images, instead of RGB?
+\item Combine state-of-art pedestrian detection with state-of-art tracking
+\item Combine Kernelized Correlation Filters with Ptior's Integral Images
+\item Category recognition (HOG) vs Instance recognition (SIFT). We care about instance recognition in tracking, because the same object appears throughout time. There's no reason to use HOG. (idea from \cite{breitenstein2009robust})
+\item We want to find local features of objects that are maximally discriminative from the background and other surrounding/moving objects. SIFT tries to do this by making 'invariant' features. Perhaps we can learn (eg. OMP/sparsity?) the best space to cluster background pixels to target pixels. A lean neural network/autoencoder?
+\item Problem: Given 2 class labelled data. Find a basis transformation that maximally separates the two clusters.
+\item motion blur. HOG doesn't take into account motion blur. Color does? The background probably has less motion. Track the background instead?
+\end{enumerate}
+
+% ====================
+\section{Questions to Answer}
+% ====================
+\begin{enumerate}
+\item Where does deep learning fit in?
+\item How should I treat the initial labelled bounding box differently?
+\end{enumerate}
+
+% ====================
+\section{Constraints}
+% ====================
+\begin{enumerate}
+	\item Start and stop of tracks
+	\begin{enumerate}
+		\item Occlusions occur when object goes in front of tracked object
+		\item tracks can start/stop at edges of frame and when appearing behind a foreground object
+	\end{enumerate}
+	\item objects move at a certain velocity, 
+	\item objects can change scale and rotation
+	\item objects are rigid
+	\item objects are at the same distance from the camera. Objects aren't necessarily the same colour/texture, but they move in the same tracks
+	\item video is not like static images: motion blur is inherent in fast moving objects, making it look different than normal
+	\item realtime/anytime (improves, but can be stopped at any time)
+\end{enumerate}
+
+\subsection{Physical Constraints}
+\begin{enumerate}
+\item moving object is connected
+\item moving object moves smoothly (minimizes jerk?)
+\item moving object conserves energy/momentum?
+\item moving object cannot just disappear: it must be occluded
+\end{enumerate}
+
+\begin{enumerate}
+\item how do you make an view-independent feature set for moving objects?
+\item optimization: define a quickly converging optimization function
+\end{enumerate}
+
+
+% ====================
+\section{Potentially Useful Ideas}
+% ====================
+\begin{enumerate}
+	\item markov chain
+	\begin{enumerate}
+		\item viterbi algorithm
+		\item forward-backward algorithm
+	\end{enumerate}
+	\item integral images
+	\item circulant structure (henriques)
+	\item bootstrapping
+	\item decision trees
+	\item entropy/infogain
+	\item quad trees $O(n^2)$ distances between each n point
+	\item "compute the distance of high-dimensional appearance descriptor vectors between image windows" "We derive an upper bound on appearance distance given the spatial overlap of two windows in an image, and use it to bound the distances of many pairs between two images" \cite{alexe2011exploiting}
+	\item Iterative closest point (ICP): align 2 point clouds
+
+\end{enumerate}
+
+high level ideas
+\begin{enumerate}
+\item recursion
+\item optimization: define a quickly converging optimization function
+\end{enumerate}
+
+\begin{enumerate}
+\item k-d tree "kd-trees are not much better than brute-force search when the number of descriptor dimensions exceeds 20"
+\item Chow-Liu trees: fully connected Bayesian network to a tree
+\item Branch and bound (explore a space)
+\item Rapidly exploring random trees
+\end{enumerate}
+
+
+
+
+% ====================
+\section{Summaries of problems from other papers}
+% ====================
+``Consider a video stream taken by a hand-held camera depicting various objects moving in and out of the camera’s field of
+view. Given a bounding box defining the object of interest
+in a single frame, our goal is to automatically determine
+the object’s bounding box or indicate that the object is not
+visible in every frame that follows. The video stream is to be
+processed at frame-rate and the process should run indefinitely
+long. We refer to this task as long-term tracking." \cite{kalal2012tracking} (in fact, their entire introduction is well-written)
+
+% ====================
+\section{Motivation}
+% ====================
+\begin{itemize}
+  \item Model-free online tracking is more organized than RGBD tracking
+  \item Still no comprehensive analysis on what makes it work (some people mention work
+  \item Some problems are solved (pose recognition with RGBD - shotton et al. \cite{shotton2013real}. I want to solve tracking with RGBD
+\end{itemize}

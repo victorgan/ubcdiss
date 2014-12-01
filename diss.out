@@ -1,0 +1,13 @@
+\BOOKMARK [0][-]{chapter.1}{1 Problem Definition}{}% 1
+\BOOKMARK [1][-]{section.1.1}{1.1 Potentially Useful Ideas}{chapter.1}% 2
+\BOOKMARK [0][-]{chapter.2}{2 Related Work}{}% 3
+\BOOKMARK [1][-]{section.2.1}{2.1 Online RGB Trackers \(vision papers\)}{chapter.2}% 4
+\BOOKMARK [2][-]{subsection.2.1.1}{2.1.1 Pre-CVPR 2013 Trackers}{section.2.1}% 5
+\BOOKMARK [2][-]{subsection.2.1.2}{2.1.2 Post-CVPR 2013 Trackers}{section.2.1}% 6
+\BOOKMARK [1][-]{section.2.2}{2.2 Online RGB-D Trackers \(vision papers\)}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.3}{2.3 Trackers \(robotics papers\)}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.4}{2.4 Temporal Speech Data}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.5}{2.5 RGB-D Datasets}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.6}{2.6 RGB-D Features}{chapter.2}% 11
+\BOOKMARK [1][-]{section.2.7}{2.7 Early Tracking}{chapter.2}% 12
+\BOOKMARK [0][-]{chapter.3}{3 Experiments}{}% 13
