@@ -4,24 +4,23 @@
 
 % \includeonly to limit which \include{}'s to insert
 % \includeonly{intro,conclusions}
-% \includeonly{contents/intro,contents/relatedwork,contents/problemdefinition,contents/experiments}
-
+% \includeonly{contents/relatedwo
 \begin{document}
 
 % ====================
 % Preliminary Pages (numbered in lower case Roman numerals)
 % ====================
 
-% %    1. Title page (mandatory)
-% \maketitle
-% 
-% %    2. Abstract (mandatory - maximum 350 words)
-% \include{contents/abstract}
-% \cleardoublepage
-% 
-% %    3. Preface
-% \include{contents/preface}
-% \cleardoublepage
+%    1. Title page (mandatory)
+\maketitle
+
+%    2. Abstract (mandatory - maximum 350 words)
+\include{contents/abstract}
+\cleardoublepage
+
+%    3. Preface
+\include{contents/preface}
+\cleardoublepage
 % 
 %    4. Table of contents (mandatory - list all items in the preliminary pages
 %    starting with the abstract, followed by chapter headings and
@@ -36,19 +35,19 @@
 %    6. List of figures (mandatory if thesis has figures)
 \listoffigures
 \cleardoublepage	% required by tocloft package
-% 
-% %    7. List of illustrations (mandatory if thesis has illustrations)
-% %    8. Lists of symbols, abbreviations or other (optional)
-% 
-% %    9. Glossary (optional)
-% \input{contents/glossary}	% always input, since other macros may rely on it
-% 
-% \textspacing		% begin one-half or double spacing
-% 
-% %   10. Acknowledgements (optional)
-% \include{contents/ack}
-% 
-% %   11. Dedication (optional)
+ 
+ %    7. List of illustrations (mandatory if thesis has illustrations)
+ %    8. Lists of symbols, abbreviations or other (optional)
+ 
+ %    9. Glossary (optional)
+ \input{contents/glossary}	% always input, since other macros may rely on it
+ 
+ \textspacing		% begin one-half or double spacing
+ 
+ %   10. Acknowledgements (optional)
+ \include{contents/ack}
+ 
+ %   11. Dedication (optional)
 
 % ====================
 % Body of Thesis (not all sections may apply)
@@ -109,6 +108,7 @@
 \include{contents/meta}
 \include{contents/log}
 \include{contents/appendix}
+\include{contents/career}
 
 % --------------------
 \backmatter

@@ -1,0 +1,756 @@
+001 Bulbasaur
+002 Ivysaur
+003 Venusaur
+004 Charmander
+005 Charmeleon
+006 Charizard
+007 Squirtle
+008 Wartortle
+009 Blastoise
+010 Caterpie
+011 Metapod
+012 Butterfree
+013 Weedle
+014 Kakuna
+015 Beedrill
+016 Pidgey
+017 Pidgeotto
+018 Pidgeot
+019 Rattata
+020 Raticate
+021 Spearow
+022 Fearow
+023 Ekans
+024 Arbok
+025 Pikachu
+026 Raichu
+027 Sandshrew
+028 Sandslash
+029 NidoranM
+030 Nidorina
+031 Nidoqueen
+032 NidoranF
+033 Nidorino
+034 Nidoking
+035 Clefairy
+036 Clefable
+037 Vulpix
+038 Ninetales
+039 Jigglypuff
+040 Wigglytuff
+041 Zubat
+042 Golbat
+043 Oddish
+044 Gloom
+045 Vileplume
+046 Paras
+047 Parasect
+048 Venonat
+049 Venomoth
+050 Diglett
+051 Dugtrio
+052 Meowth
+053 Persian
+054 Psyduck
+055 Golduck
+056 Mankey
+057 Primeape
+058 Growlithe
+059 Arcanine
+060 Poliwag
+061 Poliwhirl
+062 Poliwrath
+063 Abra
+064 Kadabra
+065 Alakazam
+066 Machop
+067 Machoke
+068 Machamp
+069 Bellsprout
+070 Weepinbell
+071 Victreebel
+072 Tentacool
+073 Tentacruel
+074 Geodude
+075 Graveler
+076 Golem
+077 Ponyta
+078 Rapidash
+079 Slowpoke
+080 Slowbro
+081 Magnemite
+082 Magneton
+083 Farfetch
+084 Doduo
+085 Dodrio
+086 Seel
+087 Dewgong
+088 Grimer
+089 Muk
+090 Shellder
+091 Cloyster
+092 Gastly
+093 Haunter
+094 Gengar
+095 Onix
+096 Drowzee
+097 Hypno
+098 Krabby
+099 Kingler
+100 Voltorb
+101 Electrode
+102 Exeggcute
+103 Exeggutor
+104 Cubone
+105 Marowak
+106 Hitmonlee
+107 Hitmonchan
+108 Lickitung
+109 Koffing
+110 Weezing
+111 Rhyhorn
+112 Rhydon
+113 Chansey
+114 Tangela
+115 Kangaskhan
+116 Horsea
+117 Seadra
+118 Goldeen
+119 Seaking
+120 Staryu
+121 Starmie
+122 MrMime
+123 Scyther
+124 Jynx
+125 Electabuzz
+126 Magmar
+127 Pinsir
+128 Tauros
+129 Magikarp
+130 Gyarados
+131 Lapras
+132 Ditto
+133 Eevee
+134 Vaporeon
+135 Jolteon
+136 Flareon
+137 Porygon
+138 Omanyte
+139 Omastar
+140 Kabuto
+141 Kabutops
+142 Aerodactyl
+143 Snorlax
+144 Articuno
+145 Zapdos
+146 Moltres
+147 Dratini
+148 Dragonair
+149 Dragonite
+150 Mewtwo
+151 Mew
+
+% ====================
+\section{Bulbasaur}
+\label{exp:Bulbasaur}
+% ====================
+% ====================
+\section{Ivysaur}
+\label{exp:Ivysaur}
+% ====================
+% ====================
+\section{Venusaur}
+\label{exp:Venusaur}
+% ====================
+% ====================
+\section{Charmander}
+\label{exp:Charmander}
+% ====================
+% ====================
+\section{Charmeleon}
+\label{exp:Charmeleon}
+% ====================
+% ====================
+\section{Charizard}
+\label{exp:Charizard}
+% ====================
+% ====================
+\section{Squirtle}
+\label{exp:Squirtle}
+% ====================
+% ====================
+\section{Wartortle}
+\label{exp:Wartortle}
+% ====================
+% ====================
+\section{Blastoise}
+\label{exp:Blastoise}
+% ====================
+% ====================
+\section{Caterpie}
+\label{exp:Caterpie}
+% ====================
+% ====================
+\section{Metapod}
+\label{exp:Metapod}
+% ====================
+% ====================
+\section{Butterfree}
+\label{exp:Butterfree}
+% ====================
+% ====================
+\section{Weedle}
+\label{exp:Weedle}
+% ====================
+% ====================
+\section{Kakuna}
+\label{exp:Kakuna}
+% ====================
+% ====================
+\section{Beedrill}
+\label{exp:Beedrill}
+% ====================
+% ====================
+\section{Pidgey}
+\label{exp:Pidgey}
+% ====================
+% ====================
+\section{Pidgeotto}
+\label{exp:Pidgeotto}
+% ====================
+% ====================
+\section{Pidgeot}
+\label{exp:Pidgeot}
+% ====================
+% ====================
+\section{Rattata}
+\label{exp:Rattata}
+% ====================
+% ====================
+\section{Raticate}
+\label{exp:Raticate}
+% ====================
+% ====================
+\section{Spearow}
+\label{exp:Spearow}
+% ====================
+% ====================
+\section{Fearow}
+\label{exp:Fearow}
+% ====================
+% ====================
+\section{Ekans}
+\label{exp:Ekans}
+% ====================
+% ====================
+\section{Arbok}
+\label{exp:Arbok}
+% ====================
+% ====================
+\section{Pikachu}
+\label{exp:Pikachu}
+% ====================
+% ====================
+\section{Raichu}
+\label{exp:Raichu}
+% ====================
+% ====================
+\section{Sandshrew}
+\label{exp:Sandshrew}
+% ====================
+% ====================
+\section{Sandslash}
+\label{exp:Sandslash}
+% ====================
+% ====================
+\section{NidoranM}
+\label{exp:NidoranM}
+% ====================
+% ====================
+\section{Nidorina}
+\label{exp:Nidorina}
+% ====================
+% ====================
+\section{Nidoqueen}
+\label{exp:Nidoqueen}
+% ====================
+% ====================
+\section{NidoranF}
+\label{exp:NidoranF}
+% ====================
+% ====================
+\section{Nidorino}
+\label{exp:Nidorino}
+% ====================
+% ====================
+\section{Nidoking}
+\label{exp:Nidoking}
+% ====================
+% ====================
+\section{Clefairy}
+\label{exp:Clefairy}
+% ====================
+% ====================
+\section{Clefable}
+\label{exp:Clefable}
+% ====================
+% ====================
+\section{Vulpix}
+\label{exp:Vulpix}
+% ====================
+% ====================
+\section{Ninetales}
+\label{exp:Ninetales}
+% ====================
+% ====================
+\section{Jigglypuff}
+\label{exp:Jigglypuff}
+% ====================
+% ====================
+\section{Wigglytuff}
+\label{exp:Wigglytuff}
+% ====================
+% ====================
+\section{Zubat}
+\label{exp:Zubat}
+% ====================
+% ====================
+\section{Golbat}
+\label{exp:Golbat}
+% ====================
+% ====================
+\section{Oddish}
+\label{exp:Oddish}
+% ====================
+% ====================
+\section{Gloom}
+\label{exp:Gloom}
+% ====================
+% ====================
+\section{Vileplume}
+\label{exp:Vileplume}
+% ====================
+% ====================
+\section{Paras}
+\label{exp:Paras}
+% ====================
+% ====================
+\section{Parasect}
+\label{exp:Parasect}
+% ====================
+% ====================
+\section{Venonat}
+\label{exp:Venonat}
+% ====================
+% ====================
+\section{Venomoth}
+\label{exp:Venomoth}
+% ====================
+% ====================
+\section{Diglett}
+\label{exp:Diglett}
+% ====================
+% ====================
+\section{Dugtrio}
+\label{exp:Dugtrio}
+% ====================
+% ====================
+\section{Meowth}
+\label{exp:Meowth}
+% ====================
+% ====================
+\section{Persian}
+\label{exp:Persian}
+% ====================
+% ====================
+\section{Psyduck}
+\label{exp:Psyduck}
+% ====================
+% ====================
+\section{Golduck}
+\label{exp:Golduck}
+% ====================
+% ====================
+\section{Mankey}
+\label{exp:Mankey}
+% ====================
+% ====================
+\section{Primeape}
+\label{exp:Primeape}
+% ====================
+% ====================
+\section{Growlithe}
+\label{exp:Growlithe}
+% ====================
+% ====================
+\section{Arcanine}
+\label{exp:Arcanine}
+% ====================
+% ====================
+\section{Poliwag}
+\label{exp:Poliwag}
+% ====================
+% ====================
+\section{Poliwhirl}
+\label{exp:Poliwhirl}
+% ====================
+% ====================
+\section{Poliwrath}
+\label{exp:Poliwrath}
+% ====================
+% ====================
+\section{Abra}
+\label{exp:Abra}
+% ====================
+% ====================
+\section{Kadabra}
+\label{exp:Kadabra}
+% ====================
+% ====================
+\section{Alakazam}
+\label{exp:Alakazam}
+% ====================
+% ====================
+\section{Machop}
+\label{exp:Machop}
+% ====================
+% ====================
+\section{Machoke}
+\label{exp:Machoke}
+% ====================
+% ====================
+\section{Machamp}
+\label{exp:Machamp}
+% ====================
+% ====================
+\section{Bellsprout}
+\label{exp:Bellsprout}
+% ====================
+% ====================
+\section{Weepinbell}
+\label{exp:Weepinbell}
+% ====================
+% ====================
+\section{Victreebel}
+\label{exp:Victreebel}
+% ====================
+% ====================
+\section{Tentacool}
+\label{exp:Tentacool}
+% ====================
+% ====================
+\section{Tentacruel}
+\label{exp:Tentacruel}
+% ====================
+% ====================
+\section{Geodude}
+\label{exp:Geodude}
+% ====================
+% ====================
+\section{Graveler}
+\label{exp:Graveler}
+% ====================
+% ====================
+\section{Golem}
+\label{exp:Golem}
+% ====================
+% ====================
+\section{Ponyta}
+\label{exp:Ponyta}
+% ====================
+% ====================
+\section{Rapidash}
+\label{exp:Rapidash}
+% ====================
+% ====================
+\section{Slowpoke}
+\label{exp:Slowpoke}
+% ====================
+% ====================
+\section{Slowbro}
+\label{exp:Slowbro}
+% ====================
+% ====================
+\section{Magnemite}
+\label{exp:Magnemite}
+% ====================
+% ====================
+\section{Magneton}
+\label{exp:Magneton}
+% ====================
+% ====================
+\section{Farfetch}
+\label{exp:Farfetch}
+% ====================
+% ====================
+\section{Doduo}
+\label{exp:Doduo}
+% ====================
+% ====================
+\section{Dodrio}
+\label{exp:Dodrio}
+% ====================
+% ====================
+\section{Seel}
+\label{exp:Seel}
+% ====================
+% ====================
+\section{Dewgong}
+\label{exp:Dewgong}
+% ====================
+% ====================
+\section{Grimer}
+\label{exp:Grimer}
+% ====================
+% ====================
+\section{Muk}
+\label{exp:Muk}
+% ====================
+% ====================
+\section{Shellder}
+\label{exp:Shellder}
+% ====================
+% ====================
+\section{Cloyster}
+\label{exp:Cloyster}
+% ====================
+% ====================
+\section{Gastly}
+\label{exp:Gastly}
+% ====================
+% ====================
+\section{Haunter}
+\label{exp:Haunter}
+% ====================
+% ====================
+\section{Gengar}
+\label{exp:Gengar}
+% ====================
+% ====================
+\section{Onix}
+\label{exp:Onix}
+% ====================
+% ====================
+\section{Drowzee}
+\label{exp:Drowzee}
+% ====================
+% ====================
+\section{Hypno}
+\label{exp:Hypno}
+% ====================
+% ====================
+\section{Krabby}
+\label{exp:Krabby}
+% ====================
+% ====================
+\section{Kingler}
+\label{exp:Kingler}
+% ====================
+% ====================
+\section{Voltorb}
+\label{exp:Voltorb}
+% ====================
+% ====================
+\section{Electrode}
+\label{exp:Electrode}
+% ====================
+% ====================
+\section{Exeggcute}
+\label{exp:Exeggcute}
+% ====================
+% ====================
+\section{Exeggutor}
+\label{exp:Exeggutor}
+% ====================
+% ====================
+\section{Cubone}
+\label{exp:Cubone}
+% ====================
+% ====================
+\section{Marowak}
+\label{exp:Marowak}
+% ====================
+% ====================
+\section{Hitmonlee}
+\label{exp:Hitmonlee}
+% ====================
+% ====================
+\section{Hitmonchan}
+\label{exp:Hitmonchan}
+% ====================
+% ====================
+\section{Lickitung}
+\label{exp:Lickitung}
+% ====================
+% ====================
+\section{Koffing}
+\label{exp:Koffing}
+% ====================
+% ====================
+\section{Weezing}
+\label{exp:Weezing}
+% ====================
+% ====================
+\section{Rhyhorn}
+\label{exp:Rhyhorn}
+% ====================
+% ====================
+\section{Rhydon}
+\label{exp:Rhydon}
+% ====================
+% ====================
+\section{Chansey}
+\label{exp:Chansey}
+% ====================
+% ====================
+\section{Tangela}
+\label{exp:Tangela}
+% ====================
+% ====================
+\section{Kangaskhan}
+\label{exp:Kangaskhan}
+% ====================
+% ====================
+\section{Horsea}
+\label{exp:Horsea}
+% ====================
+% ====================
+\section{Seadra}
+\label{exp:Seadra}
+% ====================
+% ====================
+\section{Goldeen}
+\label{exp:Goldeen}
+% ====================
+% ====================
+\section{Seaking}
+\label{exp:Seaking}
+% ====================
+% ====================
+\section{Staryu}
+\label{exp:Staryu}
+% ====================
+% ====================
+\section{Starmie}
+\label{exp:Starmie}
+% ====================
+% ====================
+\section{MrMime}
+\label{exp:MrMime}
+% ====================
+% ====================
+\section{Scyther}
+\label{exp:Scyther}
+% ====================
+% ====================
+\section{Jynx}
+\label{exp:Jynx}
+% ====================
+% ====================
+\section{Electabuzz}
+\label{exp:Electabuzz}
+% ====================
+% ====================
+\section{Magmar}
+\label{exp:Magmar}
+% ====================
+% ====================
+\section{Pinsir}
+\label{exp:Pinsir}
+% ====================
+% ====================
+\section{Tauros}
+\label{exp:Tauros}
+% ====================
+% ====================
+\section{Magikarp}
+\label{exp:Magikarp}
+% ====================
+% ====================
+\section{Gyarados}
+\label{exp:Gyarados}
+% ====================
+% ====================
+\section{Lapras}
+\label{exp:Lapras}
+% ====================
+% ====================
+\section{Ditto}
+\label{exp:Ditto}
+% ====================
+% ====================
+\section{Eevee}
+\label{exp:Eevee}
+% ====================
+% ====================
+\section{Vaporeon}
+\label{exp:Vaporeon}
+% ====================
+% ====================
+\section{Jolteon}
+\label{exp:Jolteon}
+% ====================
+% ====================
+\section{Flareon}
+\label{exp:Flareon}
+% ====================
+% ====================
+\section{Porygon}
+\label{exp:Porygon}
+% ====================
+% ====================
+\section{Omanyte}
+\label{exp:Omanyte}
+% ====================
+% ====================
+\section{Omastar}
+\label{exp:Omastar}
+% ====================
+% ====================
+\section{Kabuto}
+\label{exp:Kabuto}
+% ====================
+% ====================
+\section{Kabutops}
+\label{exp:Kabutops}
+% ====================
+% ====================
+\section{Aerodactyl}
+\label{exp:Aerodactyl}
+% ====================
+% ====================
+\section{Snorlax}
+\label{exp:Snorlax}
+% ====================
+% ====================
+\section{Articuno}
+\label{exp:Articuno}
+% ====================
+% ====================
+\section{Zapdos}
+\label{exp:Zapdos}
+% ====================
+% ====================
+\section{Moltres}
+\label{exp:Moltres}
+% ====================
+% ====================
+\section{Dratini}
+\label{exp:Dratini}
+% ====================
+% ====================
+\section{Dragonair}
+\label{exp:Dragonair}
+% ====================
+% ====================
+\section{Dragonite}
+\label{exp:Dragonite}
+% ====================
+% ====================
+\section{Mewtwo}
+\label{exp:Mewtwo}
+% ====================
+% ====================
+\section{Mew}
+\label{exp:Mew}
+% ====================

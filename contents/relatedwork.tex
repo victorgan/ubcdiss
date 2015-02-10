@@ -1,5 +1,7 @@
 % ====================
+% ===================================================
 \chapter{Literature}
+% ===================================================
 % ====================
 
 
@@ -186,7 +188,7 @@ Circulant trackers are really, quite good.
 \paragraph{Online RGB-D Trackers} no prior knowledge of the object.
 Song et. al's survey \cite{song2013tracking}, show \textbf{incorporating depth into tracking beats the state of the art.} It shows \textbf{Struck} \cite{hare2011struck} and VTD are competitive.
 
-\textbf{Gaussian Process Regression} \cite{gao2014transfer} beats struck and Song et. al's survey benchmarks.
+\textbf{Gaussian Process Regression} \cite{gao2014transfer} beats struck and Song et. al's survey benchmarks. Compares against VOT2013 \cite{kristan2013visual}, Song's princeton RGBD benchmark \cite{song2013tracking} and Wu's CVPR RGB \cite{wu2013online}.
 
 % =============================================
 \section{Trackers (robotics papers)}
@@ -200,6 +202,14 @@ Song et. al's survey \cite{song2013tracking}, show \textbf{incorporating depth i
 \item ICRA 14: road scene segmentation \cite{huang2014road} "we first produce initial object hypotheses by clustering the sparse 3D point cloud. The image pixels registered to the clustered 3D points are taken as samples to learn each object's prior knowledge. The priors are represented by Gaussian Mixture Models (GMMs) of color and 3D location information only, requiring no high-level features. We further formulate the segmentation problem within a Conditional Random Field (CRF) framework, which incorporates the learned prior models, together with hard constraints placed on the registered pixels and pairwise spatial constraints to achieve final results. "
 \item ICRA 14: Learning latent structure for activity recognition \cite{hu2014learning}. Good overview of basics.
 \end{enumerate}
+
+% =============================================
+\section{Offline Trackers}
+\label{sec:offlinetrackers}
+% =============================================
+Using the Viterbi Algorithm \cite{kraussling2008tracking}. Using a modified Viterbi algorithm to do an exhaustive search \cite{tonissen1996peformance}.
+
+
 % =============================================
 \section{Temporal Speech Data}
 \label{sec:temporalspeech}
@@ -245,8 +255,20 @@ local descriptors"
 \end{enumerate}
 
 % =============================================
-\subsection{Shotton Random Forests}
+Predicting Depth
 % =============================================
+Segmenting in 3D + time~\cite{hickson2014efficient}:
+\blockquote{Our approach relies on the following observation: If the
+scene consists only of convex objects, then every depth discontinuity
+corresponds to an object boundary. This observation
+was motivated by a study on primates [ref] which concluded
+that depth and color perception are handled by separate
+channels in our nervous system that function quite distinctly.
+Obviously the world does not consist only of convex
+objects, but nevertheless we have found this observation to
+have great practical utility in everyday scenes. }
+
+Eigen and Fergus~\cite{eigen2014predicting} predicts depth with CNNs.
 
 % ====================
 \section{Early Tracking}
@@ -263,6 +285,72 @@ http://www.cse.psu.edu/~rcollins/CollinsVLPR2009Lecture.pdf
 % ====================
 
 Benson \etal~\cite{benenson2014ten}: 10 year review paper, starting to use optical flow
+
+Object detection of a known object category is a well-studied problem. 
+Benenson \etal~\cite{benenson2014ten} show four paradigms have emerged competitive: variants of Viola and Jones~\cite{viola2005detecting}, histograms of oriented gradients (HOG) classified by linear support vector machines (SVM) \cite{dalal2005histograms}, the deformable parts model (DPM)~\cite{felzenszwalb2010object} and convolutional neural networks.
+
+% ====================
+\section{Object Detection}
+% ====================
+
+Bjorn Ommer \cite{yarlagadda2014beyond, antic2014learning, eigenstetter2014randomized, monroy2012beyond} gave a talk at UBC: find 1000 random parts; group parts by their detection responses' spatial proximity in training data instances, then use those groups as positive examples for a part.
+
+Ommer's ECCV 12 paper \cite{monroy2012beyond}:
+\blockquote{we propose an approach for learning object models for detection
+while, simultaneously, learning to segregate objects from clutter
+and extracting their overall shape. For this purpose, we exclusively use
+bounding-box annotated training data. The approach groups fragmented
+object regions using the Multiple Instance Learning (MIL) framework to
+obtain a meaningful representation of object shape which, at the same
+time, crops away distracting background clutter to improve the appearance
+representation.}
+
+% ====================
+\section{Object Proposals}
+% ====================
+Object proposals deal with finding interesting parts of an image.
+
+
+Zitnick and Dollar's \cite{zitnick2014edge} Object Proposals from Edge Detections:
+\blockquote{the number of contours that are wholly contained in a bounding box is indicative of the likelihood of the box containing an object. We propose a simple box objectness score that
+measures the number of edges that exist in the box minus those that
+are members of contours that overlap the box’s boundary. Using efficient
+data structures, millions of candidate boxes can be evaluated in a fraction
+of a second, returning a ranked set of a few thousand top-scoring proposals.
+Using standard metrics, we show results that are significantly more
+accurate than the current state-of-the-art while being faster to compute.}
+
+\cite{zitnick2014edge} has a good overview of the field, as with Dollar's Nov 18th blogpost.
+
+Uses Dollar's work on edge detection \cite{dollar2014fast}
+
+% ====================
+\section{Tracklet Proposals}
+% ====================
+Tracklet proposals deal with finding interesting tubes of the video
+
+% ====================
+\section{Edge Detection}
+% ====================
+Dollar's work on edge detection \cite{dollar2014fast}: uses random forests for structured prediction. Given 32x32 image patch, determine if each pixel in the centre 16x16 image patch belongs to an edge. Features: Piotr's integrated channel features, at each pixel and "pairwise difference features". Chug in Structured Random Forest. Achieves state of art with sharpening and multi-scale detection, running in real-time.
+
+Idea: Dollar's work on RGBD Time series, with before and after frames.
+
+On depth: Gupta's work outperforms Piotr's.
+
+
+
+
+% ====================
+\section{Thermal Images}
+% ====================
+Gade and Moeslund~\cite{gade2014thermal} give a good
+overview of using thermal cameras. 
+Teutsch \etal~\cite{teutsch2014low} also notes detection is a fundamentally different problem in thermal videos and thoroughly experiments with different feature sets for thermal object detection. 
+A trend unique to thermal object detectors is the inclusion of a pre-processing step to find candidate regions of interest based on intensity, from which object detectors can then be used to classify the region.
+Many object detectors in thermal images use shape-based features, often derived
+from silhouettes identified by applying a threshold to intensity values.
+Most thermal object detection focus on humans.
 
 % ====================
 \section{Understanding Natural Images}
@@ -284,3 +372,39 @@ Bag of words,  descriptor, vector quantization into a visual word, Chow-liu tree
 \section{Machine Learning}
 % ====================
 Gaussian Processes Bible (with matlab toolbox) \cite{rasmussen2006gaussian}
+
+
+% =============================================
+\section{Pedestrian Path Planning}
+% =============================================
+ETH overhead dataset \cite{pellegrini2009you}
+
+% ====================
+% ===================================================
+\chapter{Literature - Individual Paper Reviews}
+% ===================================================
+% ====================
+
+If it's here, it's somewhat interesting.
+% ====================
+\section{Papers With Good Content}
+% ====================
+Zitnick and Dollar's Object Proposals from Edges \cite{zitnick2014edge}. Insanely fast and state of art.
+
+Shotton's Random Forests \cite{shotton2013real}: Quality procedures (high quality training data), solves problem.
+
+
+
+% ====================
+\section{Papers Written Well}
+% ====================
+Anything by Piotr \cite{dollar2014fast}.
+
+% --------------------
+\subsection{Gao \etal~\cite{gao2014transfer}: Transfer Learning Based Visual Tracking
+with Gaussian Processes Regression}
+% --------------------
+\paragraph{Summary} Another online tracking method. I haven't read into the technique yet.
+\paragraph{Clarity} Quite clear. 
+\paragraph{Method} Very legitamate, compares against top 3 benchmarks circa 2014.
+\paragraph{Comments} They reference an astounding number of tracking papers. It seems sort of incremental and probably won't get cited. Why are people solving this problem? Who needs model-free online tracking?

@@ -2,22 +2,43 @@
 \chapter{The Problem}
 % ====================
 
-
+% ====================
+\section{Problem Goals}
+% ====================
+\begin{itemize}
+\item Advances scientific understanding of the world
+\item Be general enough to be widely useful
+\item Novel: don't work on things everyone else is.
+\end{itemize}
 
 % ====================
 \section{Specific Problem}
 % ====================
+
+\subsection{Tracking}
+\begin{enumerate}
+\item Is RGB+D Tracking significantly better than RGB tracking?
+\item Is just D tracking better than RGB tracking?
+\item Unsupervised tracklets, which also beats state-of-art tracking. T-by-D: input patch, output detection. Struck: input patch, output displacement. New: input video, output tracks, and formulate objective function to minimize error on this directly (through structured SVM?).
+\item Combine state-of-art pedestrian detection with state-of-art tracking (Combine Kernelized Correlation Filters with Ptior's Integral Images)
+\item Category recognition (HOG) vs Instance recognition (SIFT). We care about instance recognition in tracking, because the same object appears throughout time. There's no reason to use HOG. (idea from \cite{breitenstein2009robust})
+\item Integral Videos for fast feature computation, combined with edge boxes
+\item Henriques' KCFs with 3d data.
+\end{enumerate}
+
+\subsection{Object Proposals}
+\begin{enumerate}
+\item Problem: Given 2 class labelled data. Find a basis transformation that maximally separates the two clusters, regardless of background
+\item New OBject Propoal technique: We want to find local features of objects that are maximally discriminative from the background and other surrounding/moving objects. SIFT tries to do this by making 'invariant' features. Perhaps we can learn (eg. OMP/sparsity?) the best space to cluster background pixels to target pixels. A lean neural network/autoencoder?
+\end{enumerate}
+
+
+\subsection{Misc}
 List of specific problems I might tackle:
 \begin{enumerate}
-\item Is depth in tracking worth it? Can I blow online tracking out of the water?
-\item Unsupervised tracklets, which also beats state-of-art tracking. T-by-D: input patch, output detection. Struck: input patch, output displacement. New: input video, output tracks, and formulate objective function to minimize error on this directly (through structured SVM?).
-\item Is it possible to track purely using depth images, instead of RGB?
-\item Combine state-of-art pedestrian detection with state-of-art tracking
-\item Combine Kernelized Correlation Filters with Ptior's Integral Images
-\item Category recognition (HOG) vs Instance recognition (SIFT). We care about instance recognition in tracking, because the same object appears throughout time. There's no reason to use HOG. (idea from \cite{breitenstein2009robust})
-\item We want to find local features of objects that are maximally discriminative from the background and other surrounding/moving objects. SIFT tries to do this by making 'invariant' features. Perhaps we can learn (eg. OMP/sparsity?) the best space to cluster background pixels to target pixels. A lean neural network/autoencoder?
-\item Problem: Given 2 class labelled data. Find a basis transformation that maximally separates the two clusters.
 \item motion blur. HOG doesn't take into account motion blur. Color does? The background probably has less motion. Track the background instead?
+\item Review of NON-online and NON-model-free tracking.
+\item Review natural images. Paper on generating synthetic natural images, trained on Flickr10M.
 \end{enumerate}
 
 % ====================
@@ -27,6 +48,8 @@ List of specific problems I might tackle:
 \item Where does deep learning fit in?
 \item How should I treat the initial labelled bounding box differently?
 \end{enumerate}
+
+People appeal to deep learning as if it learns generalizable features of natural image statistics.
 
 % ====================
 \section{Constraints}
@@ -68,16 +91,24 @@ List of specific problems I might tackle:
 		\item viterbi algorithm
 		\item forward-backward algorithm
 	\end{enumerate}
-	\item integral images
-	\item circulant structure (henriques)
 	\item bootstrapping
 	\item decision trees
 	\item entropy/infogain
-	\item quad trees $O(n^2)$ distances between each n point
 	\item "compute the distance of high-dimensional appearance descriptor vectors between image windows" "We derive an upper bound on appearance distance given the spatial overlap of two windows in an image, and use it to bound the distances of many pairs between two images" \cite{alexe2011exploiting}
 	\item Iterative closest point (ICP): align 2 point clouds
-
+    \item Sparse Coding (Object Matching Pursuit (OMP))
+    \item Edge boxes \cite{zitnick2014edge}
+    \item Pearson Correlation Coefficient: \url{http://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient}
 \end{enumerate}
+
+Efficient operations
+\begin{itemize}
+\item XOR hamming distances
+\item integral images
+\item circulant structure (henriques)
+\item quad trees $O(n^2)$ distances between each n point
+\item lookup tables/caching
+\end{itemize}
 
 high level ideas
 \begin{enumerate}
@@ -120,9 +151,14 @@ long. We refer to this task as long-term tracking." \cite{kalal2012tracking} (in
 \section{Types of Papers in Robotics/Computer Vision}
 % ====================
 \begin{itemize}
-  \item O
-  \item Still no comprehensive analysis on what makes it work (some people mention work
-  \item Some problems are solved (pose recognition with RGBD - shotton et al. \cite{shotton2013real}. I want to solve tracking with RGBD
+  \item Fixed benchmark, a paper that improves on the benchmark incrementally (little citations)
+  \item Blow a benchmark out of the water. Fixed benchmark, a paper that improves on the benchmark massively (groundbreaking)
+  \item Blow multiple benchmarks out of the water
+  \item Introduces a new benchmark, takes off if an Ivy League/In secret paper passing list
+  \item Introduces a new problem (usually not cited if problem is uninteresting)
+  \item Introduces a novel method of academic elegance (something other than MCMC/supervised learning/GPs/etc.)
+  \item Survey papers, meta-reviews, etc.
+  \item Solves a field, eg. Shotton \etal~\cite{shotton2013real}. 
 \end{itemize}
 
 
