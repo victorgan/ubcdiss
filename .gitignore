@@ -5,15 +5,12 @@
 *.out
 *.pdf
 *.toc
-*.aux
 *.dvi
-*.log
 *.blg
 *.bbl
-*.toc
 *.lo[ft]
-*.pdf
 *.brf
-*.out
+*.fdb_latexmk
+*.fls
 ubcdiss-*.zip
 version.tex
