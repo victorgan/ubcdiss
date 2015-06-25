@@ -55,7 +55,7 @@
 \usepackage[scaled=.92]{helvet}
 
 %% Math or theory people may want to include the handy AMS macros
-%\usepackage{amssymb}
+\usepackage{amssymb} % for $\mathbb{R}$, Real R
 %\usepackage{amsmath}
 %\usepackage{amsfonts}
 
@@ -303,7 +303,7 @@
 %% files
 \hypersetup{
   pdftitle={Change this title!  (DRAFT: \today)},
-  pdfauthor={Johnny Canuck},
+  pdfauthor={Victor Gan},
   pdfkeywords={Your keywords here}
 }
 
@@ -320,3 +320,7 @@
 %% <http://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/order-components>
 
 \usepackage{csquotes} % For \blockquote
+\usepackage[chapter]{algorithm} % chapter makes numbering relative to chapter
+\usepackage{algpseudocode}
+\algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
+\algrenewcommand\algorithmicensure{\textbf{Postcondition:}}
