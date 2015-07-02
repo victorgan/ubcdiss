@@ -138,19 +138,26 @@ on the ground plane, an object, or unknown.
 \Require{$P_{rotated}$, $gridStepSize$, $groundThreshold$}
 \Statex
 \Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
-    \State $groundMap$, a 2D Histogram with each bin of size $gridStepSize$ metres
-    \State $objectMap$, a 2D Histogram with each bin of size $gridStepSize$ metres
+    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
+    \State $objectMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
     \For{each point $p \in P_{rotated}$}
-        \State $(x,y,z) \gets$ p
+        \State $(x,y,z) \gets p$
         \If{$z < groundThreshold$}
             \State add $1$ to the appropriate $groundMap$ bin based on $(x,y)$
         \Else
             \State add $1$ to the appropriate $objectMap$ bin based on $(x,y)$
         \EndIf
     \EndFor
+    \State $objectMap \gets GaussianBlur(objectMap, \sigma_1)$
+    \State $objectMap \gets 1$ for each non-zero bin, $0$ otherwise
+
+    \State $groundMap \gets GaussianBlur(groundMap, \sigma_2)$
+    \State $groundMap \gets 0$ for each bin equal to zero and not already in $objectMap$, $1$ otherwise
 \EndFunction
 \Statex
-\Ensure{$groundMap$ and $objectMap$}
+\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
+ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
+impassible objects.
 \end{algorithmic}
 \end{algorithm}
 
@@ -160,7 +167,23 @@ on the ground plane, an object, or unknown.
 Three checks: If configuration can be fully placed on ground, if configuration
 is reachable from the initial position, and if the cofiguration is not fully cut
 off.
+Algorithm \autoref{alg:feasibilitycheck} shows this.
 
+\begin{algorithm}
+\caption{Feasibility Check}
+\label{alg:feasibilitycheck}
+\begin{algorithmic}[1]
+\Require{$groundMap$, $objectMap$}
+\Statex
+\Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
+    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
+\EndFunction
+\Statex
+\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
+ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
+impassible objects.
+\end{algorithmic}
+\end{algorithm}
 
 % ====================
 \section{Choosing a Suitable Parking Configuration}
@@ -171,6 +194,21 @@ Rely on heuristics.
 Sum of squared closest distances
 
 
+\begin{algorithm}
+\caption{Potential Function Choice}
+\label{alg:potentialfunctionchoice}
+\begin{algorithmic}[1]
+\Require{$groundMap$, $objectMap$}
+\Statex
+\Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
+    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
+\EndFunction
+\Statex
+\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
+ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
+impassible objects.
+\end{algorithmic}
+\end{algorithm}
 
 
 % ====================
@@ -201,13 +239,13 @@ feasible path from the initial state to the goal state. An optimality criterion
 may also be applied to choose the best path if multiple feasible ones are found.
 
 Notably, two important concepts have often been ignored in determining the path:
-the dynamics of the system and the use of feedback. Dynamics refers to how
-states transition to other states, and is inherent in real-world systems. For
-example, a car can easily move fowards and backwards, but cannot immediately
-move side to side. Feedback refers to the technique of refining further actions
-based on newly sensed data. In simulations, feedback may not be necessary, but
-in real-world systems, errors in sensing and modeling build up over time without
-it.
+the differential constraints of the system and the use of feedback. Differential
+constraints refers to how states transition to other states, and is inherent in
+real-world systems, eg. a system's dynamics. For example, a car can easily move
+fowards and backwards, but cannot immediately move side to side. Feedback refers
+to the technique of refining further actions based on newly sensed data. In
+simulations, feedback may not be necessary, but in real-world systems, errors in
+sensing and modeling build up over time without it.
 
 In this simple case, the generated path is followed in an open-loop manner, or
 if subject to real-world constraints (see \autoref{fig:lavalle2006planning119}),
@@ -247,12 +285,13 @@ criterion: RRT*, PRM*
 \end{itemize}
 
 see \autoref{fig:determinedrive2}.
-\begin{figure}
+
+\begin{figure} % --------------------------------------
 \centering
 \includegraphics[width=3in]{figures/determinedrive2.png}
 \caption{Feedback loop}
 \label{fig:determinedrive2}
-\end{figure}
+\end{figure}   % --------------------------------------
 
 
 % --------------------
@@ -261,12 +300,12 @@ see \autoref{fig:determinedrive2}.
 see \autoref{fig:determinedrive1}.
 For a full description, see Chapter 8 of Lavalle \cite{lavalle2006planning}.
 
-\begin{figure}
+\begin{figure} % --------------------------------------
 \centering
 \includegraphics[width=3in]{figures/determinedrive1.png}
 \caption{Feedback loop}
 \label{fig:determinedrive1}
-\end{figure}
+\end{figure}   % --------------------------------------
 
 % --------------------
 \section{Practical Options}
