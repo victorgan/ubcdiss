@@ -1,5 +1,5 @@
 % ====================
-\chapter{Perceiving a Suitable Parking Spot}
+\chapter{Identifying a Parking Spot}
 % ====================
 
 % • In a paper you MUST provide the details, but FIRST convey the idea
@@ -25,16 +25,17 @@ We first address the problem of identifying a suitable parking spot for a
 wheelchair in an indoor environment. The identified parking spot will then be
 used as a goal state for a planner to subsequently move the robot to.
 
-We start with the simple case of the following assumptions:
+We start with the following assumptions, for initial simplicity:
 \begin{itemize}
 \item We will use one RGB-D camera for detection
 \item The algorithm will work in an indoor environment. Objects on the floor
-will be: humans, chairs, other wheelchairs, tables and cabinets.
+include but are not limited to: humans, chairs, other wheelchairs, tables and cabinets.
 \item The floor will be flat throughout (i.e. no ramps)
-\item The suitable parking spot in question is entirely viewable by the camera.
+\item The suitable parking spot in question is entirely in view of the camera.
 In practice this means the RGB-D camera is facing the parking spot such that
-it is visible and it is not overshadowed by any obstacle.
-\item a 2d occupancy map will be used
+it is visible and the parking spot is not overshadowed by any obstacle.
+\item a 2D occupancy map will be used instead of directly working in the 3D
+point cloud space
 \end{itemize}
 
 % Why not front and back cameras?
@@ -42,39 +43,55 @@ it is visible and it is not overshadowed by any obstacle.
 \begin{figure}
 \centering
 \includegraphics[width=3in]{figures/rgbdmap.png}
-\caption{Pipeline}
+\caption{Pipeline for choosing a suitable parking spot.
+The transition from point cloud data to a 2D environment map is described in
+\autoref{sec:processingPointCloud} and \autoref{sec:2dmap}. Generating feasible configurations from the
+environment map is described in \autoref{sec:feasibleparkingspot}. Selecting one
+of the feasible configurations is described in
+\autoref{sec:choosingparkingspot}.}
 \label{fig:rgbdmap}
 \end{figure}
 
-\autoref{fig:rgbdmap} shows the general pipeline.
+\autoref{fig:rgbdmap} shows the general pipeline of the approach taken. The
+point cloud data is transformed into a 2D environment map consisting of objects,
+ground (free space), and unknown space. From this, the set of feasible
+wheelchair configurations are determined, and a heuristic-based desriability
+function is applied to choose an appropriate configuration from the feasible set.
 
-
+\begin{figure}
+\centering
+\includegraphics[width=3in]{figures/rgbdwheelchair.png}
+\caption{RGB and Depth images as seen by the wheelchair. The objective is to
+identify a suitable location within the image for back-in parking.}
+\label{fig:rgbdwheelchair}
+\end{figure}
 
 % ====================
 \section{Preprocessing the Point Cloud}
+\label{sec:processingPointCloud}
 % ====================
 
 To make a map, we are inspired by the approaches of Holz \cite{holz2013towards}
 and Gritti \cite{gritti2014kinect} to detect obstacles based on their height
-from the ground plane.
+from the ground plane. This will allow detection of obstacles regardless of
+their shape.
 
 First, the point cloud is downsampled using a voxelized grid approach with a 1mm
 grid filter. This reduces the computational load and prevents excess weighting of
-certain volumes in the ground plane detection.
+certain volumes in the upcoming ground plane detection.
 
-Next, a modified version of RANSAC is used to estimate the ground plane. This is
-done for multiple reasons:
-\begin{itemize}
-\item Allows map to be taken relative to the ground plane
-\item An obstacle can then be characterized by any point that resides above the
-ground plane
-\item Frame-by-frame plane detection is done for robustness to changing angles of
-the camera.
-\end{itemize}
+Next, a modified version of RANSAC is used to estimate the ground plane. The
+ground plane is needed for two reasons:
+it allows a 2D map to be taken relative to the ground plane, and an obstacle can
+be characterized by any point that resides above the ground plane.
 
+Ground plane detection is done on individual frames for robustness to changing
+angles of the camera.
 Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC,
-which results in a 4-tuple $(a,b,c,d)$ satisfying $ax + by + cz + d = 0$
-representing the ground plane.
+which results in a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
+$ax + by + cz + d = 0$. Lines 7-9 highlight an additional constraint to avoid
+detecting vertical planar surfaces (i.e. walls).
+
 
 \begin{algorithm}
 \caption{Modified RANSAC}
@@ -111,25 +128,44 @@ plane}
 \end{algorithm}
 
 The coordinate system for the point cloud is then rotated so the resulting
-ground plane is aligned with the x-y axis.
+ground plane is aligned with the x-y plane. \autoref{fig:pointclouds} shows an
+example of the detected ground plane and the rotation to align the ground plane
+to the x-y plane.
+
+\begin{figure}
+\centering
+\includegraphics[width=6in]{figures/pointclouds.png}
+\caption{Left: point cloud obtained from the RGBD sensor. Middle:
+Downsampled point cloud with ground plane detected. Right: Rotated point cloud.}
+\label{fig:pointclouds}
+\end{figure}
 
 % ====================
 \section{Generating a 2D Map}
+\label{sec:2dmap}
 % ====================
-The 2D Map is generated by projecting the 3D ground-aligned point cloud 
+The 2D Map is generated by projecting the 3D ground-aligned point cloud onto the
+ground plane.
 Algorithm \autoref{alg:groundmapprojection} shows how the point cloud is
-converted to 2D histograms of object and ground locations. A Gaussian blur with
-a standard deviation of 0.7 is applied to filter out holes and include a safety
-buffer, and binarized by thresholding at zero, resulting in a binary object map.
-Similarly, the 2D ground histogram is binarized by first applying a Gaussian
-blur with a standard deviation of 0.5 and thresholding at zero. Additionally, a
-1m circle around the origin of the camera is assumed to be viable positions in
-the ground map, which accounts for the minimimum range of the RGBD camera. In a
-conservative fashion, any true pixels in the ground map that shares a true value
-in the object map is set to false, making the set of ground pixels and object
-pixels mutually exclusive. A third map is created for pixels that are not
-classified as a ground or object; hence each pixel must be classified as either
-on the ground plane, an object, or unknown.
+converted to 2D histograms of object and ground locations. 
+A Gaussian blur with
+a standard deviation of 0.7 is applied to filter out holes due to noise and
+include a safety buffer. This is binarized on lines 12 and 13 by thresholding at
+zero, resulting in a binary object map.
+Similarly, the 2D ground histogram is binarized on lines 14 and 15 by first applying a Gaussian
+blur with a standard deviation of 0.5 and thresholding at zero. 
+Additionally, a 1m circle around the origin of the camera is assumed to be
+viable positions in the ground map, which accounts for the minimimum range of
+the RGBD camera. This is needed to ensure connectivity between the origin state
+and farther feasible states, needed on line 2 in algorithm
+\autoref{alg:feasibilitycheck}.
+
+In a conservative fashion, any true pixels in the ground map that share a true
+value in the object map is set to false, making the set of ground pixels and
+object pixels mutually exclusive. 
+% A third map is created for pixels that are not classified as a ground or object;
+% hence each pixel must be classified as either on the ground plane, an object, or
+% unknown.
 
 \begin{algorithm}
 \caption{Ground Map Projection}
@@ -161,75 +197,165 @@ impassible objects.
 \end{algorithmic}
 \end{algorithm}
 
+\autoref{fig:groundobjectmap} shows an example of the resulting ground and
+object map.
+
+\begin{figure}
+\centering
+\includegraphics[width=5in]{figures/groundobjectmap.png}
+\caption{2D projection of the point cloud. Green (light gray on black and white)
+is classified as ground, red (medium gray) is classified as objects, and blue
+(dark gray) is classified as unknown, determined by Algorithm
+\autoref{alg:groundmapprojection}. The black pixel near the centre top
+represents the location of the wheelchair during time of capture.}
+\label{fig:groundobjectmap}
+\end{figure}
+
 % ====================
 \section{Finding Feasible Parking Configurations}
+\label{sec:feasibleparkingspot}
 % ====================
-Three checks: If configuration can be fully placed on ground, if configuration
-is reachable from the initial position, and if the cofiguration is not fully cut
-off.
-Algorithm \autoref{alg:feasibilitycheck} shows this.
+From a ground map and object map, a set of feasible configurations for the
+wheelchair are found. A wheel chair configuration is defined as $(x,y,\theta)$,
+where $(x,y)$ define the centre of the wheelchair in the 2D map coordinates of
+the ground and object map, and $\theta$ defines a rotation of the wheelchair,
+where $\theta = 0$ is the angle of the wheelchair when the point cloud is
+captured. Possible values of $\theta$ range from $-10$ to $10$ degrees (TODO
+change).
+
+To determine if each configuration for all possible values of $x$, $y$ and
+$\theta$ is feasible, three checks are performed, as seen in algorithm
+\autoref{alg:feasibilitycheck}. 
+
+The first check is to see if the wheelchair
+collides with any objects or is placed on areas not known to be ground. This
+performed by checking if each configuration is fully within the ground map area.
+
+The second check is to determine if each configuration can be reached from the
+wheelchair's current configuration, the origin $(x_0,y_0,\theta_0)$. $(x_0,y_0)$
+is determined from the same transformation used in
+\autoref{sec:processingPointCloud} to align the ground plane to the x-y axes.
+$\theta_0$ is set to $0$. A flood-fill algorithm is then performed on the
+feasible configuration set obtained in the first check to determine all connecting
+feasible configurations to the origin $(x_0,y_0,\theta_0)$. Two feasible
+configurations are deemed connnected if they are within one manhattan unit of
+each other in $x-y-\theta$ space.
+Then, feasible configurations from the first check that have no feasible
+connecting path to the origin are deemed unreachable and discarded. 
+This simplification assumes the possible transitions between states are a one
+unit change in $x$, $y$ or $\theta$ (in effect, a holonomic system), instead of
+primitive transition curves of a differential drive system \cite{balkcom2002time}. 
+
+
+The third check ensures the entirety of the wheelchair falls within the bounds
+of the map.
 
 \begin{algorithm}
 \caption{Feasibility Check}
 \label{alg:feasibilitycheck}
 \begin{algorithmic}[1]
-\Require{$groundMap$, $objectMap$}
+\Require{$groundMap, wheelChairMaps, origin$}
 \Statex
-\Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
-    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
+\Function{FeasibleStates}{$groundMap, wheelChairMaps, origin$}
+    \State $feasibleStates \gets$ 1 for all states
+    \For{each configuration $c \in$ Configuration Space}
+        \State $w \gets wheelChairMaps(c)$
+        \State $feasibleStates(c) \gets$ 0 if $w$ is not enclosed in $groundMap$
+        \State $feasibleStates(c) \gets$ 0 if $c$ is not connected in configuration space to $origin$
+        \State $feasibleStates(c) \gets$ 0 if $w$ collides with edge of map
+    \EndFor
 \EndFunction
 \Statex
-\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
-ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
-impassible objects.
+\Ensure{$feasibleStates$, a 3D boolean array with values of $1$ representing
+feasible configurations of the wheelchair}
 \end{algorithmic}
 \end{algorithm}
 
 % ====================
 \section{Choosing a Suitable Parking Configuration}
+\label{sec:choosingparkingspot}
 % ====================
-We don't have enough data.
-Rely on heuristics.
+Given the set of feasible parking spots, we must now choose one of them. What
+defines a good parking spot? One could pose this as a supervised learning
+problem, given many expert-labeled parking spots on different feasible
+configuration sets.  Obtaining meaningful labels, however, is challenging due to
+the shear number of possibilities of feasible configuration sets. A
+reinforcement learning approach requires defining an appropriate reward
+function, which brings us back to the problem of what defines a good parking
+spot. We take a heuristics-based approach to develop a potential (reward)
+function that is exhaustively evaluated for every configuration, and the
+configuration with the maximum potential is chosen.
 
-Sum of squared closest distances
+Algorithm \autoref{alg:generatestatepotentials} shows how a score is given to each
+feasible configuration, where higher values correlate to more desirable parking
+spots. $w$ in line 3 is a boolean 2D array with values of $1$ representing the
+wheelchair at configuration $c$. A squared distance transform is then performed
+on the union of $objectMap$ and $w$. This results in $distanceMap$ being the
+squared distance of each ground pixel to the closest object to it (with the
+wheelchair itself considered an object). This gives a score to each ground pixel:
+the farther away the pixel is from all objects, the more desirable the ground
+pixel. 
+
+The squared term is included to quadratically favour ground pixels far
+away from all objects. This can be reasoned that ground close to objects are less
+desirable in a typical wheelchair environment: small areas and cracks between
+obstacles are prohibitively small for humans or robots to pass through, and
+ground directly next to obstacles risk collision. Ground far from obstacles, on
+the other hand, allow for unobstructed movement and ample parking space for
+other wheelchairs.
+
+The score for each configuration is then the sum of all the scores for each
+ground pixel, as in line 5.
 
 
 \begin{algorithm}
-\caption{Potential Function Choice}
-\label{alg:potentialfunctionchoice}
+\caption{Generating State Potentials}
+\label{alg:generatestatepotentials}
 \begin{algorithmic}[1]
 \Require{$groundMap$, $objectMap$}
 \Statex
-\Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
-    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
+\Function{GenerateStatePotentials}{$objectMap, wheelChairMaps, feasibleStates$}
+    \For{each configuration $c \in feasibleStates$}
+        \State $w \gets wheelChairMaps(c)$
+        \State $distanceMap \gets$ squared distance transform of $objectMap \cup w$
+        \State $statePotentials(c) \gets$ sum over all values of $distanceMap$
+    \EndFor
 \EndFunction
 \Statex
-\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
-ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
-impassible objects.
+\Ensure{$statePotentials$, a configuration-space array where each value
+represents the desirability of that configuration.}
 \end{algorithmic}
 \end{algorithm}
 
+\autoref{fig:desirabilityfunction} shows an example of state potentials
+generated from Algorithm \autoref{alg:generatestatepotentials}.
 
+\begin{figure}
+\centering
+\includegraphics[width=6in]{figures/desirabilityfunction.png}
+\caption{Example of a desirability function over a configuration space with 9
+different values for $\theta$. Blue represents low desirability, yellow
+represents high desirability. Infeasible configurations determined in 
+\autoref{sec:feasibleparkingspot} have desirabilities of $-\infty$.} 
+\label{fig:desirabilityfunction}
+\end{figure}
 % ====================
 \chapter{Motion Planning}
 % ====================
 % --------------------
-\section{Basic Ingredients}
-% --------------------
-\begin{itemize}
-\item State
-\item Time
-\item Actions
-\item Initial and Goal States
-\item Feasibility and Optimality Criterion
-\item A Plan
-\end{itemize}
-
-For a full description, see Chapter 1.3 of Lavalle \cite{lavalle2006planning}.
-% --------------------
 \section{Introduction to Motion Planning}
 % --------------------
+An in-depth introduction can be found in Chapter 1.3 of Lavalle
+\cite{lavalle2006planning}.
+% \begin{itemize}
+% \item State
+% \item Time
+% \item Actions
+% \item Initial and Goal States
+% \item Feasibility and Optimality Criterion
+% \item A Plan
+% \end{itemize}
+
 % --------------------
 \subsection{Simple Motion Planning}
 % --------------------
@@ -238,28 +364,32 @@ known goal state and a fixed known initial state. The problem is to determine a
 feasible path from the initial state to the goal state. An optimality criterion
 may also be applied to choose the best path if multiple feasible ones are found.
 
-Notably, two important concepts have often been ignored in determining the path:
-the differential constraints of the system and the use of feedback. Differential
-constraints refers to how states transition to other states, and is inherent in
+Notably, two important concepts are ignored in determining the path:
+differential constraints of the system and the use of feedback. Differential
+constraints refer to how states transition to other states, and is inherent in
 real-world systems, eg. a system's dynamics. For example, a car can easily move
-fowards and backwards, but cannot immediately move side to side. Feedback refers
-to the technique of refining further actions based on newly sensed data. In
-simulations, feedback may not be necessary, but in real-world systems, errors in
-sensing and modeling build up over time without it.
+fowards and backwards, but cannot immediately move side to side, which may be
+assumed when determining a path. Feedback refers to the technique of refining
+further actions based on newly sensed data. In simulations feedback may not be
+necessary, but in real-world systems, errors in sensing and modeling build up
+over time without it.
 
-In this simple case, the generated path is followed in an open-loop manner, or
-if subject to real-world constraints (see \autoref{fig:lavalle2006planning119}),
-the generated path is smoothed to obey the system's dynamics and feedback is
-used to closely follow the path. "Notably this approach is highly decoupled as
-feedback and dynamics are neglected in constructing the original path"
-\cite{lavalle2006planning}. The smooth path may now obey the robot's dynamics,
-but may no longer be feasible.  Feedback is used merely as an inefficient
-afterthought.
+In this simple case, the solution involves a generated path that is followed in
+an open-loop manner, or if subject to real-world constraints (see
+\autoref{fig:lavalle2006planning119}), the generated path is smoothed to obey
+the system's dynamics and feedback is used to closely follow the path. "Notably
+this approach is highly decoupled as feedback and dynamics are neglected in
+constructing the original path" \cite{lavalle2006planning}. The smooth path may
+now obey the robot's dynamics, but may no longer be feasible. Feedback is used
+as an inefficient afterthought to stay on a track that itself may not be
+feasible or optimal.
 
 \begin{figure}
 \centering
 \includegraphics[width=3in]{figures/lavalle2006planning119.png}
-\caption{From \cite{lavalle2006planning}. A refinement approach that has been used for decades in robotics.}
+\caption{From \cite{lavalle2006planning}. A refinement approach that has been
+used for decades in robotics. Note the initial path is computed without
+consideration of differential constraints or the use of feedback}
 \label{fig:lavalle2006planning119}
 \end{figure}
 
@@ -269,55 +399,53 @@ spaces and sampling-based techniques such as RRTs (RRT* for optimality) and PRMs
 have proven to be the methods of choice (citation?), though it is still an
 ongoing field of interest (cite 2015 RRT/PRM papers).
 
+The ROS Navigaiton Stack
+(\url{http://www.dis.uniroma1.it/~nardi/Didattica/CAI/matdid/robot-programming-ROS-introduction-to-navigation.pdf})
+is an example of this.
 % --------------------
 \subsection{Feedback Motion Planning}
 % --------------------
-Dynamics refers, generally, to how a state transitions to another state.
+Incorporating feedback directly when generating a path is a secondary option. 
+For a full description of feedback motion planning, see Chapter 8 of Lavalle
+\cite{lavalle2006planning}.
+In the back-in parking problem, the trajectory to the goal state is assumed
+visible, and hence generating a vector field may be suitable. A reliable model
+and odometry data, however, varies from wheelchair to wheelchair, and so the
+solution must be robust to model inaccuracies.
 
-Feedback (or reactive plans) refers to something else.
-
-Tiers of motion planning problems
-\begin{itemize}
-\item Fixed Initial and Goal States, no dynamics, no feedback, some optimality
-criterion: RRT*, PRM*
-\item Fixed Initial and Goal States, dynamics, no feedback: RRT*, A*
-\item Fixed Initial and Goal States, no dynamics, feedback
-\end{itemize}
-
-see \autoref{fig:determinedrive2}.
-
+Two approaches can be taken: One, a target parking spot can be determined from
+the initial position of the wheelchair, and the initial point cloud can be used
+as a local map. The task is then to simultaneously localize the wheelchair's
+position in the initial map while following a trajectory towards the parking
+spot. This is visualized in \autoref{fig:determinedrive2}.
+ 
 \begin{figure} % --------------------------------------
 \centering
 \includegraphics[width=3in]{figures/determinedrive2.png}
-\caption{Feedback loop}
+\caption{Feedback loop with a fixed goal state and map}
 \label{fig:determinedrive2}
 \end{figure}   % --------------------------------------
 
-
-% --------------------
-\subsection{Feedback Motion Planning with Updating Goal State}
-% --------------------
-see \autoref{fig:determinedrive1}.
-For a full description, see Chapter 8 of Lavalle \cite{lavalle2006planning}.
-
+A second approach is to instead continuously update the initial map with new
+sensor data, in effect performing SLAM on a constrained trajectory. The goal
+state can then also be continously updated as new map information is ingested,
+and the trajectory of the wheelchair will be updated based on this.
+\autoref{fig:determinedrive1} illustrates this.
+ 
 \begin{figure} % --------------------------------------
 \centering
 \includegraphics[width=3in]{figures/determinedrive1.png}
 \caption{Feedback loop}
 \label{fig:determinedrive1}
 \end{figure}   % --------------------------------------
-
-% --------------------
-\section{Practical Options}
-% --------------------
-ROS Navigaiton Stack
-http://www.dis.uniroma1.it/~nardi/Didattica/CAI/matdid/robot-programming-ROS-introduction-to-navigation.pdf
-
-\begin{figure}
-\centering
-\includegraphics[width=3in]{figures/mappinglocalizationpathplanningvenndiagram.png}
-\caption{Venn Diagram of Localization, Mapping and Path Planning}
-\label{fig:mappinglocalizationpathplanningvenndiagram}
-\end{figure}
-
-We don't care about mapping
+% 
+% % --------------------
+% \section{Practical Options}
+% % --------------------
+% 
+% \begin{figure}
+% \centering
+% \includegraphics[width=3in]{figures/mappinglocalizationpathplanningvenndiagram.png}
+% \caption{Venn Diagram of Localization, Mapping and Path Planning}
+% \label{fig:mappinglocalizationpathplanningvenndiagram}
+% \end{figure}
