@@ -29,7 +29,8 @@ We start with the following assumptions, for initial simplicity:
 \begin{itemize}
 \item We will use one RGB-D camera for detection
 \item The algorithm will work in an indoor environment. Objects on the floor
-include but are not limited to: humans, chairs, other wheelchairs, tables and cabinets.
+include but are not limited to: chairs, other wheelchairs, tables and cabinets.
+\item The algorithm not deal with moving objects in the scene
 \item The floor will be flat throughout (i.e. no ramps)
 \item The suitable parking spot in question is entirely in view of the camera.
 In practice this means the RGB-D camera is facing the parking spot such that
@@ -38,7 +39,10 @@ it is visible and the parking spot is not overshadowed by any obstacle.
 point cloud space
 \end{itemize}
 
-% Why not front and back cameras?
+% ====================
+\section{Problem formulation}
+% ====================
+We formulate the problem as follows: Bayesian/MDP formulation
 
 \begin{figure}
 \centering
@@ -65,6 +69,72 @@ function is applied to choose an appropriate configuration from the feasible set
 identify a suitable location within the image for back-in parking.}
 \label{fig:rgbdwheelchair}
 \end{figure}
+
+% ====================
+\section{Literature Review}
+\label{sec:parkinglotidentificationlitreview}
+% ====================
+Detecting a parking spot poses an interesting problem. Unlike a standard object
+detection pipeline, a parking spot is not determined by the appearance of an
+object, but by the presence of negative space within an area. The context of the
+scene also determines where an adequete parking spot should be. In this way, an
+ideal parking spot is not purely identifiable by the features within it; but
+instead is determined by contextual cues surrounding it.
+
+
+\subsection{Outdoor Parking Lot Detection}
+Work has been done to determine locations of parking spots for cars in car lots
+[citations]. Many of these techniques rely on the presence of parking spot
+lines, and use line detection algorithms to do so. Once the parking spot is
+found, a support vector machine is trained on empty and occupied parking spots.
+
+These methods rely on accurate identification based on line markings, which are
+not present in indoor environments not purely dedicated to parking. 
+
+Formulating the problem as a classification problem is then harder, as
+classification must be done on any feasible area instead of just a set number of
+pre-identified parking spots.
+
+These algorithms also do not address which of the found parking spots to choose:
+in a car parking lot, one spot dominates the camera due to the close proximity
+of the car to the spots. However, in an indoor wheelchair environment, many
+parking lots exists.
+
+
+\subsection{Choosing the best parking spot}
+[ICRA 15] identifies where best to park using an MDP?.
+
+This addresses the issue of how best to choose a parking spot given multiple
+candidates. However, it does not work over continuous space, which is what we
+have.
+
+\subsection{Other}
+Interestingly, [TODO cite] uses two cameras positions forward and backwards of
+the robot. This allows for more sensing of the environment, and also helps with
+localization. However, this requires multuple USB buses as the buses get
+saturated. As well, proper calibration of the distances is required.
+% Why not front and back cameras?
+
+
+% ====================
+\section{Data Set}
+\label{sec:rgbddataset}
+% ====================
+A data set of RGBD video is obtained by attaching an Asus Xtion Pro Live onto a
+(Wheelchair Model) power wheelchair. Obstacles such as chairs, other
+wheelchairs, tables and cabinets are laid out in an indoor office environment to
+simulate instances where a wheelchair would potentially park.
+
+Ten different instances are recorded. In each instance, the wheelchair starts
+from afar, and is drive into the parking spot, reversed out, then moved
+laterally and rotationally. At every point in the video, the position of the
+parking spot is within sight of the camera, with the assumption that the back-in
+algorithm will only be run if the wheelchair is already pointed in the general
+area.
+
+A 3D model of the wheelchair used is also obtained using the Kinect Fusion
+algorithm [cite]. This allows for precise simulations of how large the
+wheelchair is.
 
 % ====================
 \section{Preprocessing the Point Cloud}
@@ -275,6 +345,9 @@ feasible configurations of the wheelchair}
 \section{Choosing a Suitable Parking Configuration}
 \label{sec:choosingparkingspot}
 % ====================
+% --------------------
+\subsection{Formulation}
+% --------------------
 Given the set of feasible parking spots, we must now choose one of them. What
 defines a good parking spot? One could pose this as a supervised learning
 problem, given many expert-labeled parking spots on different feasible
@@ -283,9 +356,25 @@ the shear number of possibilities of feasible configuration sets. A
 reinforcement learning approach requires defining an appropriate reward
 function, which brings us back to the problem of what defines a good parking
 spot. We take a heuristics-based approach to develop a potential (reward)
-function that is exhaustively evaluated for every configuration, and the
-configuration with the maximum potential is chosen.
+function that is exhaustively evaluated for every configuration.
+This obtains a full potential function for the state space, instead of a single
+state. The best state may be chosen by taking the state with the maximum
+potential.
 
+A good potential function will satisfy the following properties
+\begin{itemize}
+\item monotonically increasing, allowing for efficient computation
+using gradients
+\end{itemize}
+
+TODO place in a general framework
+
+We evaluate multiple approaches. We then determine performance based on an
+empirical evaluation, and choose a pareto optimal combination of each.
+
+% --------------------
+\subsection{Algorithm A: Parking lots that maximize usable space}
+% --------------------
 Algorithm \autoref{alg:generatestatepotentials} shows how a score is given to each
 feasible configuration, where higher values correlate to more desirable parking
 spots. $w$ in line 3 is a boolean 2D array with values of $1$ representing the
@@ -306,7 +395,6 @@ other wheelchairs.
 
 The score for each configuration is then the sum of all the scores for each
 ground pixel, as in line 5.
-
 
 \begin{algorithm}
 \caption{Generating State Potentials}
@@ -438,6 +526,15 @@ and the trajectory of the wheelchair will be updated based on this.
 \caption{Feedback loop}
 \label{fig:determinedrive1}
 \end{figure}   % --------------------------------------
+
+% ====================
+\section{Literature Review}
+\label{sec:backinginlitreview}
+% ====================
+One way is to have a fixed, open-loop trajectory. This method is very old and
+has been done for cars.
+
+
 % 
 % % --------------------
 % \section{Practical Options}
