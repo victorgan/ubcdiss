@@ -42,7 +42,7 @@ point cloud space
 % ====================
 \section{Problem formulation}
 % ====================
-We formulate the problem as follows: Bayesian/MDP formulation
+We formulate the problem as follows: General Bayesian/MDP formulation?
 
 \begin{figure}
 \centering
@@ -62,13 +62,7 @@ ground (free space), and unknown space. From this, the set of feasible
 wheelchair configurations are determined, and a heuristic-based desriability
 function is applied to choose an appropriate configuration from the feasible set.
 
-\begin{figure}
-\centering
-\includegraphics[width=3in]{figures/rgbdwheelchair.png}
-\caption{RGB and Depth images as seen by the wheelchair. The objective is to
-identify a suitable location within the image for back-in parking.}
-\label{fig:rgbdwheelchair}
-\end{figure}
+
 
 % ====================
 \section{Literature Review}
@@ -108,12 +102,12 @@ This addresses the issue of how best to choose a parking spot given multiple
 candidates. However, it does not work over continuous space, which is what we
 have.
 
-\subsection{Other}
-Interestingly, [TODO cite] uses two cameras positions forward and backwards of
-the robot. This allows for more sensing of the environment, and also helps with
-localization. However, this requires multuple USB buses as the buses get
-saturated. As well, proper calibration of the distances is required.
-% Why not front and back cameras?
+% \subsection{Other}
+% Interestingly, [TODO cite] uses two cameras positions forward and backwards of
+% the robot. This allows for more sensing of the environment, and also helps with
+% localization. However, this requires multuple USB buses as the buses get
+% saturated. As well, proper calibration of the distances is required.
+% % Why not front and back cameras?
 
 
 % ====================
@@ -125,7 +119,7 @@ A data set of RGBD video is obtained by attaching an Asus Xtion Pro Live onto a
 wheelchairs, tables and cabinets are laid out in an indoor office environment to
 simulate instances where a wheelchair would potentially park.
 
-Ten different instances are recorded. In each instance, the wheelchair starts
+[x] different instances are recorded. In each instance, the wheelchair starts
 from afar, and is drive into the parking spot, reversed out, then moved
 laterally and rotationally. At every point in the video, the position of the
 parking spot is within sight of the camera, with the assumption that the back-in
@@ -135,6 +129,15 @@ area.
 A 3D model of the wheelchair used is also obtained using the Kinect Fusion
 algorithm [cite]. This allows for precise simulations of how large the
 wheelchair is.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{figures/rgbdwheelchair.png}
+\caption{RGB and Depth images as seen by the wheelchair. The objective is to
+identify a suitable location within the image for back-in parking.}
+\label{fig:rgbdwheelchair}
+\end{figure}
+
 
 % ====================
 \section{Preprocessing the Point Cloud}
@@ -159,8 +162,8 @@ Ground plane detection is done on individual frames for robustness to changing
 angles of the camera.
 Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC,
 which results in a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
-$ax + by + cz + d = 0$. Lines 7-9 highlight an additional constraint to avoid
-detecting vertical planar surfaces (i.e. walls).
+$ax + by + cz + d = 0$. Lines 7-9 highlight the modificaiton with an additional
+constraint to avoid detecting vertical planar surfaces (i.e. walls).
 
 
 \begin{algorithm}
@@ -314,7 +317,8 @@ Then, feasible configurations from the first check that have no feasible
 connecting path to the origin are deemed unreachable and discarded. 
 This simplification assumes the possible transitions between states are a one
 unit change in $x$, $y$ or $\theta$ (in effect, a holonomic system), instead of
-primitive transition curves of a differential drive system \cite{balkcom2002time}. 
+primitive transition curves of a differential drive system
+\cite{balkcom2002time}. The ease of computation justifies this choice.
 
 
 The third check ensures the entirety of the wheelchair falls within the bounds
@@ -370,7 +374,7 @@ using gradients
 TODO place in a general framework
 
 We evaluate multiple approaches. We then determine performance based on an
-empirical evaluation, and choose a pareto optimal combination of each.
+empirical evaluation.
 
 % --------------------
 \subsection{Algorithm A: Parking lots that maximize usable space}
@@ -422,8 +426,8 @@ generated from Algorithm \autoref{alg:generatestatepotentials}.
 \centering
 \includegraphics[width=6in]{figures/desirabilityfunction.png}
 \caption{Example of a desirability function over a configuration space with 9
-different values for $\theta$. Blue represents low desirability, yellow
-represents high desirability. Infeasible configurations determined in 
+different values for $\theta$. Blue (dark) represents low desirability, yellow
+(light) represents high desirability. Infeasible configurations determined in 
 \autoref{sec:feasibleparkingspot} have desirabilities of $-\infty$.} 
 \label{fig:desirabilityfunction}
 \end{figure}
