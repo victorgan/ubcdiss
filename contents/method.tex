@@ -42,6 +42,12 @@ point cloud space
 % ====================
 \section{Problem formulation}
 % ====================
+
+Many methods formulate the problem of identifying a parking spot as a detection
+problem, where a parking spot is to be detected within the scene.
+We instead 
+
+
 We formulate the problem as follows: General Bayesian/MDP formulation?
 
 \begin{figure}
@@ -78,7 +84,16 @@ instead is determined by contextual cues surrounding it.
 
 \subsection{Outdoor Parking Lot Detection}
 Work has been done to determine locations of parking spots for cars in car lots
-[citations]. Many of these techniques rely on the presence of parking spot
+[citations]. 
+\cite{wu2006parking, true2007vacant}
+
+Suhr \cite{suhr2010automatic} detects parking spaces in a similar way to ours.
+They detect parking spaces by first detecting neighbouring cars using geometric
+constraints. Our method, in contrast, does not require such hardcoded
+constraints.
+
+
+Many of these techniques rely on the presence of parking spot
 lines, and use line detection algorithms to do so. Once the parking spot is
 found, a support vector machine is trained on empty and occupied parking spots.
 
@@ -93,6 +108,12 @@ These algorithms also do not address which of the found parking spots to choose:
 in a car parking lot, one spot dominates the camera due to the close proximity
 of the car to the spots. However, in an indoor wheelchair environment, many
 parking lots exists.
+
+\subsection{Packing Problems}
+This problem also has similarities to packing problems. The general packing
+problem tries to, given a set of rectangular objects, pack as many as possible
+in a larger rectanle. In our case, we are given one wheelchair, and we may wish
+to pack it in a space that is least obstrusive to other areas.
 
 
 \subsection{Choosing the best parking spot}
@@ -546,6 +567,10 @@ has been done for cars.
 \cite{sermeno2006vision} uses vision-based PID control (page 17)
 
 Angus's paper using PID
+
+\subsection{Localization}
+Talebifard \cite{talebifard2014risk} creates an egocentric map to avoid
+localization.
 
 % ====================
 \section{Implementation Details}

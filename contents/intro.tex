@@ -62,7 +62,8 @@ parallel parking or cruise control on a car is more suitable.
 
 Some work has been done on task-specific autonomous PWC behaviours, including
 navigation in crowded environments \cite{prassler2001robotics}, obstacle
-avoidance \cite{viswanathan2012navigation}, and docking onto lift platforms
+avoidance \cite{viswanathan2012navigation}, person tracking
+\cite{leigh2015person}, and docking onto lift platforms
 \cite{sermeno2006vision} and custom-designed beds \cite{ren2012docking}.
 
 More general overviews of smart wheelchair systems can be found in
@@ -72,6 +73,10 @@ confirm).
 Little work has been done to dock/back-in park a wheelchair in a more general
 environment, such a general indoor office environment akin to a room in a
 long-term care facility. 
+Adhikari \cite{adhikari2014single} develops an initial back-in parking
+procedures using a pregenerated map and predetermined parkint spot. We build on
+this.
+
 
 % Done: Bikram's thesis intro, Pouria's thesis intro
 
@@ -83,6 +88,17 @@ On
 
 \section{Hardware}
 We use a (TODO model) by (TODO) 
+
+We use a Lenovo W530 laptop with 
+\begin{itemize}
+\item Intel Core i7-3720QM Processor
+\item 8GB RAM
+\item 120GB SSD
+\item NVIDIA Quadro K1000M Graphical Processing Unit
+\item Two dedicated USB controllers for USB 2.0 and USB 3.0
+\item Ubuntu 14.04 64-bit
+\item Robotic Operating System (Indigo release)
+\end{itemize}
 
 (Contributions) In this paper we put this point on a further basis:
 \begin{itemize}
