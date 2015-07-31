@@ -403,6 +403,29 @@ We evaluate multiple approaches. We then determine performance based on an
 empirical evaluation.
 
 % --------------------
+\subsection{Min Convolutions}
+% --------------------
+From \cite{burcsi2010table}:
+Let $x = (x_0, x_1, ..., x_n)$ and $y = (y_0, y_1, ..., y_n)$ be one-dimensional
+vectors.
+A min-convolution (also known as the (min,+)-convolution) of $x$ and $y$ is the
+vector $x \star y = z = (z_0, z_1, ...,z_{2n})$
+with $z_m = min(x_i + y_{m-i})$, where the minimum is taken over all possible
+values of $i$. 
+In contrast, standard convolution, or (+,*)-convolution, is obtained if min is replaced by $\sum$ and
+$x_i + y_{m-i}$ by $x_i * y_{m-i}$ , i.e. 
+$z_m = \sum(x_i * y_{m-i})$
+
+What I want is (+,min)-convolution, $z_m = \sum min(x_i , y_{m-i})$
+
+I can do this by:
+making function A positive, function B negative.
+Apply min-convolution.
+making function A negative, function B positive.
+Apply min-convolution.
+do something else.
+
+% --------------------
 \subsection{Algorithm A: Parking lots that maximize usable space}
 % --------------------
 Algorithm \autoref{alg:generatestatepotentials} shows how a score is given to each
