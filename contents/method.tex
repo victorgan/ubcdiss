@@ -425,6 +425,29 @@ making function A negative, function B positive.
 Apply min-convolution.
 do something else.
 
+
+The only special case we are aware of where a fast algorithm is known for
+rank-convolutions is the case when the mask is an axis-parallel box. This case
+is common in computer vision and image processing. Rank-convolutions in this
+case can be computed in O ( n log n) time; and min- convolution in O ( n) (Gil
+and Werman [15]) \cite{babai2009computing}.
+
+Computing min-convolutions when f is arbitrary but g is convex has received
+special attention because of its applications to sequence alignment [9] and to
+computing distance transforms of images [10]. As pointed out by Eppstein [9],
+the problem can be solved in O ( n) time by using the totally monotone matrix
+search algorithm of Aggarwal et al. [1].
+\cite{babai2009computing}
+
+Felzenszwalb and Huttenlocher [10] developed a different algorithm for the case
+when g is convex by noting the relationship between min-convolutions and
+lower-envelopes (minimum of a family of functions). The same approach can be
+used when g is concave. This algorithm runs in O ( n) time if an intersection
+point between shifted copies of g can be computed in constant time. In the worst
+case, binary search will find an intersection in O (log n) time, yielding an O (
+n log n) algorithm.
+\cite{babai2009computing}
+
 % --------------------
 \subsection{Algorithm A: Parking lots that maximize usable space}
 % --------------------
