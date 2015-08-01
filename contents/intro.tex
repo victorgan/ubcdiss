@@ -19,6 +19,7 @@
 
 
 
+\section{The Impact of Autonomous Back-in Parking}
 
 % Purpose: Motivate the need of an autonomous back-in parking system.
 
@@ -76,16 +77,56 @@ Little work has been done to dock/back-in park a wheelchair in a more general
 environment, such a general indoor office environment akin to a room in a
 long-term care facility. 
 
+This motivates the work in this thesis: we focus on automating the back-in
+parking task, a specific task that has been proven desirable and helpful to be
+automated.
 
-% Done: Bikram's thesis intro, Pouria's thesis intro
+\section{Problem Definition}
+How does a machine command a wheelchair to back-in park? We decompose this into two
+tasks, identifying a parking spot and moving into the identified parking spot,
+for modularity and for the solutions to be transferable to a large range of
+topics.
+Identifying a parking spot begs many questions:
+\begin{itemize}
+\item How do you define a parking spot?
+\item How do you determine feasible parking spots around you?
+\item How do you predict which parking spot the user has in mind, if there is any?
+\item What makes some spots better than others, and in what situations?
+\item What has already been done?
+\item How can one answer these questions in a solution that is 
+computationally efficient or even real-time?
+\end{itemize}
 
-On
 
-% TODO talk about shared control? Pouria's thesis, page 1
-
-\section{Previous work on Smart Wheelchairs}
 
 \section{Hardware}
+We choose and fix the hardware used beforehand.
+
+We use an RGB-D sensor due to its suitability to the problem:
+it works well indoors, where the target users will be using the wheelchairs; it
+is cost effective; it provices depth information with adequete accuracy.
+
+We use only one camera. This is for simplicity. Each camera saturates its USB
+controller, hence a computer must have as many USB controllers as cameras.
+An additional calibration step to register the information, increasing the
+computational costs even further than the linear factor. 
+One can argue a limitation of using one RGB-D sensor is the depth measurements
+have a range of around 0.6 m to 8 m, with a field of view of 43 degrees
+vertically by 57 degrees horizontally (TODO better reference) \cite{endres2014catadioptric},
+comparitively limited to lidars with fields of view of 180 degrees. Some work
+\cite{endres2014catadioptric} has been done using two mirrors to split the field
+of view of a single camera to cover both the front and rear view. Our work
+sticks to a single camera for simplicity, though it can be naturally extended.
+
+We mount the RGB-D camera downwards. However, we do not rely on a specific angle
+to keep the solutions generalizable to systems that might have different camera
+angles. The only assumption is the ground plane is visible.
+
+We use an Asus RGB-D camera as it is smaller and less obtrustive than the Kinect
+and does not require an additional power plug; it gets its power entirely from
+USB.
+
+
 We use a (TODO model) by (TODO) 
 
 We use a Lenovo W530 laptop with 
@@ -116,11 +157,13 @@ Any text after an \endinput is ignored.
 \subsection{One sentence summary}
 % --------------------
 We introduce an autonomous back-in parking system for powered wheelchairs
-equipped with an RGB-D sensor.
+equipped with an RGB-D sensor, that finds a suitable place to park in a room
+without any marked parking spots.
 
 % --------------------
 \subsection{One paragraph summary}
 % --------------------
+We address the problem: Where
 
 % --------------------
 \subsection{Five minute read summary}

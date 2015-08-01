@@ -27,7 +27,6 @@ used as a goal state for a planner to subsequently move the robot to.
 
 We start with the following assumptions, for initial simplicity:
 \begin{itemize}
-\item We will use one RGB-D camera for detection
 \item The algorithm will work in an indoor environment. Objects on the floor
 include but are not limited to: chairs, other wheelchairs, tables and cabinets.
 \item The algorithm not deal with moving objects in the scene
@@ -36,7 +35,7 @@ include but are not limited to: chairs, other wheelchairs, tables and cabinets.
 In practice this means the RGB-D camera is facing the parking spot such that
 it is visible and the parking spot is not overshadowed by any obstacle.
 \item a 2D occupancy map will be used instead of directly working in the 3D
-point cloud space
+point cloud space. This is to reduce computation.
 \end{itemize}
 
 % ====================
@@ -47,9 +46,42 @@ Many methods formulate the problem of identifying a parking spot as a detection
 problem, where a parking spot is to be detected within the scene.
 We instead 
 
-
 We formulate the problem as follows: General Bayesian/MDP formulation?
 
+\subsection{Definitions}
+
+\begin{itemize}
+\item Configuration space
+\item Pointcloud space
+\item 2D Map space
+\item Ground Map
+\item Object Map
+\item Unkown Map
+\item Feasibile states
+\item Desirability function
+\end{itemize}
+
+\subsection{Characteristics of a good parking spot}
+\begin{itemize}
+\item Minimize 'useless' space,
+\item space that another wheelchair cannot fit in 
+\item minimize tight spaces, holes, blockades
+\item be parallel/perpendicular to walls
+\item must be reachable from the current location in a reasonable amount of
+time: one smooth motion instead of many iterations of forward/reversing
+\item related: takes into account non-holonomic constraints
+\item maximize usable free space, minimize wasted space
+\item maximize the amount of contiguous space: space that is wide open is more
+desirable
+\item ensure wheelchair's 'safety': a margin of error, the parking spot
+shouldn't be directly touching any objects
+\end{itemize}
+
+We return to these characteristics during evaluation in section [TODO], where we
+develop quantatitive measures.
+
+
+\subsection{Our Approach}
 \begin{figure}
 \centering
 \includegraphics[width=3in]{figures/rgbdmap.png}
@@ -67,8 +99,6 @@ point cloud data is transformed into a 2D environment map consisting of objects,
 ground (free space), and unknown space. From this, the set of feasible
 wheelchair configurations are determined, and a heuristic-based desriability
 function is applied to choose an appropriate configuration from the feasible set.
-
-
 
 % ====================
 \section{Literature Review}
@@ -109,26 +139,45 @@ in a car parking lot, one spot dominates the camera due to the close proximity
 of the car to the spots. However, in an indoor wheelchair environment, many
 parking lots exists.
 
+TODO researchlog/thesis.org for references.
+
+Many techniques using location-tailored hardware to detect free parking spaces
+in car parking lots, involving wireless sensors \cite{panja2011wirelessly},
+pre-existing security cameras \cite{true2007vacant} and magnetic field detectors
+\cite{boda2007design}. In contrast, our method aims to detect free parking
+spaces with only sensors onboard the wheelchair: no external sensors and even no
+external pre-determined parking lot spots.
+
+
 \subsection{Packing Problems}
 This problem also has similarities to packing problems. The general packing
 problem tries to, given a set of rectangular objects, pack as many as possible
 in a larger rectanle. In our case, we are given one wheelchair, and we may wish
 to pack it in a space that is least obstrusive to other areas.
 
+TODO researchlog/thesis.org for references.
 
 \subsection{Choosing the best parking spot}
-[ICRA 15] identifies where best to park using an MDP?.
+\cite{bogoslavskyi2015where} identifies where best to park using an MDP?.
 
 This addresses the issue of how best to choose a parking spot given multiple
 candidates. However, it does not work over continuous space, which is what we
 have.
 
-% \subsection{Other}
-% Interestingly, [TODO cite] uses two cameras positions forward and backwards of
-% the robot. This allows for more sensing of the environment, and also helps with
-% localization. However, this requires multuple USB buses as the buses get
-% saturated. As well, proper calibration of the distances is required.
-% % Why not front and back cameras?
+\subsection{Choosing the best parking spot, game-theoretic approaches}
+Given locations of free car parking spots in a city, Ayala et al.
+\cite{ayala2011parking} attempts to choose the ideal parking spot location
+in a game-theoretic framework. TODO READ.
+\cite{ayala2012parking}
+
+\cite{mejri2014cooperation} uses performance metrics: average distance between
+the vehicle and assigned slot, and others.
+
+\cite{alfonsetti2014semi} states: 
+As a result, almost all existing methods for parking slot assignment are simple
+and greedy approaches, where each car is assigned a free parking slot, which is
+closer to its destination. Moreover, no emphasis is placed to optimize the
+social benefit of the users during the parking slot assignment. 
 
 
 % ====================
@@ -164,17 +213,27 @@ identify a suitable location within the image for back-in parking.}
 \section{Preprocessing the Point Cloud}
 \label{sec:processingPointCloud}
 % ====================
-
 To make a map, we are inspired by the approaches of Holz \cite{holz2013towards}
 and Gritti \cite{gritti2014kinect} to detect obstacles based on their height
 from the ground plane. This will allow detection of obstacles regardless of
 their shape.
 
+One may argue: why not go directly from RGB-D sensor data to classification of
+parking spots, instead of a pipeline approach?
+First, we will see that ground detection is fairly robust and computationally
+cheap: there is very little error in this preprocessing step.
+Second, RGB-D data varies quite a bit; there is no clear mapping from RGB-D
+point clouds to location of parking spots. A learning approach would require an
+overbearing amount of training examples.
+
 First, the point cloud is downsampled using a voxelized grid approach with a 1mm
 grid filter. This reduces the computational load and prevents excess weighting of
 certain volumes in the upcoming ground plane detection.
 
-Next, a modified version of RANSAC is used to estimate the ground plane. The
+Next, parameter estimation must be done to estimate the ground plane. Multiple methods
+exist, including RANSAC, Hough transform, and M-estimators
+\cite{holz2013towards}.
+We use a modified version of RANSAC to estimate the ground plane. The
 ground plane is needed for two reasons:
 it allows a 2D map to be taken relative to the ground plane, and an obstacle can
 be characterized by any point that resides above the ground plane.
@@ -240,6 +299,18 @@ Downsampled point cloud with ground plane detected. Right: Rotated point cloud.}
 TODO Rotation matrix equations
 
 % ====================
+\subsection{Ground Plane Detection Evaluation}
+% ====================
+Experiment: 
+\begin{itemize}
+\item Repeat for 2 videos: flat ground, going on ramps
+\item check if first and last frames are correct
+\item see change in parameters/angle of ground. Plot
+\item state accuracy
+\item test for speed
+\end{itemize}
+
+% ====================
 \section{Generating a 2D Map}
 \label{sec:2dmap}
 % ====================
@@ -258,6 +329,8 @@ viable positions in the ground map, which accounts for the minimimum range of
 the RGBD camera. This is needed to ensure connectivity between the origin state
 and farther feasible states, needed on line 2 in algorithm
 \autoref{alg:feasibilitycheck}.
+
+TODO talk about morphological dilation and erosion.
 
 In a conservative fashion, any true pixels in the ground map that share a true
 value in the object map is set to false, making the set of ground pixels and
