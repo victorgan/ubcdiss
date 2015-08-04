@@ -19,7 +19,7 @@
 
 
 
-\section{The Impact of Autonomous Back-in Parking}
+\section{The Impact of Autonomous Wheelchairs}
 
 % Purpose: Motivate the need of an autonomous back-in parking system.
 
@@ -52,14 +52,14 @@ navigation capabilities with a growth rate of 5.9\% per year \cite{simpson2008ma
 Powered wheelchairs (PWCs) with autonomous maneuvering capabilities is both
 necessary and will directly improve the quality of life of millions of people.
 
-Complete PWC automation, however, is not be desired. 
+Complete PWC automation, however, is not suitable. 
 A totally autonomous system may deprive user's feeling of being in control 
 \cite{viswanathana2014wizard}.
 Older adults preferred robot assistance over human assistance for tasks related
 to chores, manipulating objects, and information management, but not personal
 care and leisure activities \cite{smarr2014domestic}.
-Instead, task-specific autonomous routines, akin to parallel parking or cruise
-control in a car, may be more suitable.
+Instead, task-specific autonomous routines is preferable, akin to automatic
+parallel parking or cruise control in a car.
 Some work has been done on task-specific autonomous PWC behaviours, including
 navigation in crowded environments \cite{prassler2001robotics}, obstacle
 avoidance \cite{viswanathan2012navigation}, and docking onto lift platforms
@@ -68,15 +68,14 @@ More general overviews of smart wheelchair systems have also been described
 \cite{viswanathan2012navigation, simpson2005smart, faria2013patient}. 
 
 One common task is back-in parking.
-
 % Not much in general back-in parking, a very common task in the target demographic
 Little work has been done to dock/back-in park a wheelchair in a more general
-environment, such a general indoor office environment akin to a room in a
+environment, such a general indoor office environment or a room in a
 long-term care facility. 
 
 This motivates the work in this thesis: we focus on automating the back-in
-parking task, a specific task that has been proven desirable and helpful to be
-automated.
+parking task for a PWC, a specific task that has been proven desirable and
+helpful to be automated.
 
 \section{Problem Definition}
 How does a machine command a wheelchair to back-in park? We decompose this into two
@@ -94,7 +93,19 @@ Identifying a parking spot begs many questions:
 computationally efficient or even real-time?
 \end{itemize}
 
+In this thesis I focus on two of these questions: how do you define a place to
+park on an open floorspace, how do you back into said parking spot.
 
+(Contributions) In this paper we put this point on a further basis:
+\begin{itemize}
+\item Introduce a pipeline that picks a place to park
+\item Introduce an efficient algorithm to perform (+,min)-convolutions
+\item Validates algorithm with empirical performance measures
+\item Introduce a pipeline that backs-in a wheelchair
+\item Validates the algorithm with real world experimental results
+\end{itemize}
+
+Chapter X describes background and preliminary notation used.
 
 \section{Hardware}
 We choose and fix the hardware used beforehand.
@@ -137,10 +148,6 @@ We use a Lenovo W530 laptop with
 \item Robotic Operating System (Indigo release)
 \end{itemize}
 
-(Contributions) In this paper we put this point on a further basis:
-\begin{itemize}
-\item contribution 1
-\end{itemize}
 
 % ======================
 \endinput
