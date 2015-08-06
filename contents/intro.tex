@@ -1,9 +1,10 @@
 %% The following is a directive for TeXShop to indicate the main file
 %%!TEX root = diss.tex
 
-% Describe the problem
-% State your contributions (write the list of contributions fist)
-% that’s all
+% - Describe the problem
+% - State your contributions (write the list of contributions fist)
+% - that's all
+
 % use an example to introduce the problem
 % Reader thinks“gosh, if they can really deliver this, that’d be exciting; Id
 % bet- ter read on” [? ]
@@ -47,13 +48,13 @@ wheelchair would benefit from an automated navigation system.
 This population that stands to benefit is significant:
 In 2008, 1.4 to 2.3 million people in the US were estimated to
 benefit from powered wheelchairs with some autonomous functions, and of those
-973 thousand to 1.7 million will benefit particularly from autonomous
+973,000 to 1.7 million will benefit particularly from autonomous
 navigation capabilities with a growth rate of 5.9\% per year \cite{simpson2008many}.
-Powered wheelchairs (PWCs) with autonomous maneuvering capabilities is both
+Powered wheelchairs (PWCs) with autonomous maneuvering capabilities are both
 necessary and will directly improve the quality of life of millions of people.
 
 Complete PWC automation, however, is not suitable. 
-A totally autonomous system may deprive user's feeling of being in control 
+A totally autonomous system may deprive a user's feeling of being in control 
 \cite{viswanathana2014wizard}.
 Older adults preferred robot assistance over human assistance for tasks related
 to chores, manipulating objects, and information management, but not personal
@@ -67,15 +68,49 @@ avoidance \cite{viswanathan2012navigation}, and docking onto lift platforms
 More general overviews of smart wheelchair systems have also been described
 \cite{viswanathan2012navigation, simpson2005smart, faria2013patient}. 
 
-One common task is back-in parking.
+One common task is back-in parking [TODO bikram thesis/pooja's draft]. 
 % Not much in general back-in parking, a very common task in the target demographic
 Little work has been done to dock/back-in park a wheelchair in a more general
-environment, such a general indoor office environment or a room in a
-long-term care facility. 
+environment, such as an indoor office or a room in a long-term care facility. 
 
-This motivates the work in this thesis: we focus on automating the back-in
-parking task for a PWC, a specific task that has been proven desirable and
-helpful to be automated.
+This motivates the application of the work in this thesis:
+we focus on automating the back-in parking task for a PWC, a specific task that
+has been proven desirable and helpful to be automated.
+
+% \section{Motion Planning with Ill-Defined Goal States}
+% 
+% Lots of work has been done to determine a path given a goal state/set. This
+% assumes a goal set has been previously defined.
+% 
+% Lots of work has been done on determining objects, scenes. But little work has
+% been done to combine the two: Determinine a suitable goal state that takes into
+% account feasibility and choosing a goal state that is present in the scene. 
+% 
+% This is closely related to developing a potential function: a pseudo-metric that
+% defines how close you are to a goal. Our work skips the 'given a goal state,
+% design a potential function' step, and develops a potential field as a
+% by-product of generating goal states.
+% 
+% Often it makes sense to have a fixed goal set, or one goal state. If your robot
+% wants to reach the fridge, having the location of the fridge is an appropriate
+% goal.
+% We do away with the notion that there is a fixed goal set. Often the goal set is
+% fuzzy, we do not know much about it. Instead, we form a desirability function
+% (which can be seen as a negative potential field) over the configuration space.
+% We then plan to reach a high level in the desirability function given certain
+% constraints.
+% 
+% Take, for example, the problem of placing a robot to rest for a night. Where
+% should you place it? In most cases there isn't a correct answer. There is no
+% well-defined goal state. There are also constraints that must be satisfied:
+% obstacle avoidance, minimum path length. Instead of posing the problem as path
+% planning towards an arbitrary goal state, we pose it as steering the robot to an
+% incrementally better configuration.
+% 
+% It's often assumed you can see what your goal state is like. There are a lot of
+% times a goal state isn't defined by what it looks like, but by the context
+% surrounding it: perhaps it is an enclosed space that fits the robot just right.
+
 
 \section{Problem Definition}
 How does a machine command a wheelchair to back-in park? We decompose this into two
@@ -112,7 +147,7 @@ We choose and fix the hardware used beforehand.
 
 We use an RGB-D sensor due to its suitability to the problem:
 it works well indoors, where the target users will be using the wheelchairs; it
-is cost effective; it provices depth information with adequete accuracy.
+is cost effective; it provides depth information with adequate accuracy.
 
 We use only one camera. This is for simplicity. Each camera saturates its USB
 controller, hence a computer must have as many USB controllers as cameras.
@@ -121,7 +156,7 @@ computational costs even further than the linear factor.
 One can argue a limitation of using one RGB-D sensor is the depth measurements
 have a range of around 0.6 m to 8 m, with a field of view of 43 degrees
 vertically by 57 degrees horizontally (TODO better reference) \cite{endres2014catadioptric},
-comparitively limited to lidars with fields of view of 180 degrees. Some work
+comparatively limited to lidars with fields of view of 180 degrees. Some work
 \cite{endres2014catadioptric} has been done using two mirrors to split the field
 of view of a single camera to cover both the front and rear view. Our work
 sticks to a single camera for simplicity, though it can be naturally extended.
@@ -130,7 +165,7 @@ We mount the RGB-D camera downwards. However, we do not rely on a specific angle
 to keep the solutions generalizable to systems that might have different camera
 angles. The only assumption is the ground plane is visible.
 
-We use an Asus RGB-D camera as it is smaller and less obtrustive than the Kinect
+We use an Asus RGB-D camera as it is smaller and less obtrusive than the Kinect
 and does not require an additional power plug; it gets its power entirely from
 USB.
 

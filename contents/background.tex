@@ -1,0 +1,223 @@
+% ===================================================
+\chapter{Background}
+% ===================================================
+
+% % ===================================================
+% \section{Robotics Pipelines}
+% % ===================================================
+% 
+% % ---------------------------------------------------
+% \subsection{Robotic Operating System}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Robotic Operating System}
+% % ---------------------------------------------------
+% 
+% % ===================================================
+% \section{Modeling}
+% % ===================================================
+% 
+% % ---------------------------------------------------
+% \subsection{Classification}
+% % ---------------------------------------------------
+% Modeling 
+% 
+% % ---------------------------------------------------
+% \subsection{Bayesian Stuff}
+% % ---------------------------------------------------
+% Chiu-Liu Trees
+% 
+% % ---------------------------------------------------
+% \subsection{Markov Chains, MDPs, POMDPs}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Reinforcement Learning}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Path Planning}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Bandit Problems}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Feasibility}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Game Theory}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Control}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Rotations}
+% % ---------------------------------------------------
+% 
+% % ---------------------------------------------------
+% \subsection{Distance Transforms and Geodesics}
+% % ---------------------------------------------------
+
+% ===================================================
+\section{Notation for Traditional Path Planning}
+% ===================================================
+
+\theoremstyle{definition}
+\begin{definition}{Maximal Reachable Set}
+A fibration is a mapping between two topological spaces that has the homotopy lifting property for every space $X$.
+\end{definition}
+
+Taken from page 17 of \cite{lavalle2006planning}:
+
+\begin{definition}{State}
+Temp
+\end{definition}
+
+\begin{definition}{state space $X$}
+Finite or countably infinite set of states.
+\end{definition}
+
+\begin{definition}{Initial State $x_1 \in X$}
+Temp
+\end{definition}
+
+\begin{definition}{Goal Set $X_G \subset X$}
+Temp
+\end{definition}
+
+\begin{definition}{Time}
+Temp
+\end{definition}
+
+\begin{definition}{Action $u$}
+Temp
+\end{definition}
+
+\begin{definition}{action space $U(x)$}
+A finite set of actions for each state $x \in X$
+\end{definition}
+
+\begin{definition}{(state transition function)}
+ $f(x,u) \in X$
+A finite set of actions for each state $x \in X$
+\end{definition}
+
+\begin{definition}{Feasibility Criterion}
+Temp
+\end{definition}
+
+\begin{definition}{Optimality Criterion}
+Temp
+\end{definition}
+
+\begin{definition}{Plan}
+Temp
+\end{definition}
+
+\begin{definition}{Potential Function}
+Temp
+\end{definition}
+
+\begin{definition}{Configuration Space}
+Temp
+\end{definition}
+
+\begin{definition}{XYZ Space}
+Temp
+\end{definition}
+
+\begin{definition}{XY Space $M$}
+Temp
+\end{definition}
+
+
+% % ===================================================
+% \chapter{Related Work}
+% % ===================================================
+% % show my problem is unsolved
+% % • show my problem is interesting
+% % • show my idea works
+% % • show how my idea compares to other ideas
+% % • No related work yet! Include at end.
+% % – Problem 1: describing alternative approaches gets between the reader
+% % and your idea (I feel tired)
+% % – Problem 2: the reader knows nothing about the problem yet; so your
+% % (carefully trimmed) description of various technical tradeoffs is abso-
+% % lutely incomprehensible (I feel stupid)
+% % – instead, Concentrate single-mindedly on a narrative that
+% % ∗ Describes the problem, and why it is interesting
+% % ∗ Describes your idea
+% % ∗ Defends your idea, showing how it solves the problem, and filling
+% % out the details
+% % ∗ On the way, cite relevant work in passing, but defer discussion to
+% % the end
+% % • show how my idea compares to other ideas
+% % • Be generous to the competition. In his inspiring paper [Foo98] Foogle shows....
+% % We develop his foundation in the following ways...
+% % • Giving credit to others does not diminish the credit you get from your paper
+% % • Acknowledge weaknesses in your approach
+% % • Failing to give credit to others can kill your paper: You don’t know that it’s
+% % an old idea (bad) or You do know, but are pretending it’s yours (very bad)
+% 
+% % ====================
+% \section{Parking Lot Detection}
+% % ====================
+% % Wang \cite{wang2014automatic}
+% % Jung \cite{jung2014semiautomatic}
+% % 
+% % Pouria's thesis \cite{talebifard2014risk}
+% % Talk: \url{https://www.youtube.com/watch?v=Db7EhLYf-Yk#t=1h11m07s}
+% % 
+% % 
+% % file:papers/jiang1999sensor.pdf
+% % Basic old paper on parallel parking. Uses ultrasonic sensor, then
+% % fixed planning.
+% % 
+% % file:papers/fairus2011development.pdf
+% % Old paper. Scanning methods.
+% % 
+% % file:papers/wang2013automatic.pdf
+% % Newish lit review of automatic parking
+% % 
+% % file:papers/abad2007parking.pdf
+% % Parking space detection using 3d vision. Parallel parking
+% % 
+% % file:papers/lalonde2012single.pdf
+% % CVPR workshop paper.
+% % 
+% % file:papers/suhr2010automatic.pdf
+% % Good! Solving my problem, but with a laser rangefinder.
+% % found from: http://www.mathworks.com/matlabcentral/answers/126413-how-to-detect-free-spots-in-a-parking-area
+% % 
+% % file:assets/WheelchairGuide.pdf
+% 
+% % ====================
+% \section{SLAM}
+% % ====================
+% 
+% LSD-Slam and PTAM for monocular seem to be state-of-art: \url{http://vision.in.tum.de/research/lsdslam}
+% 
+% review paper: \url{http://www-personal.acfr.usyd.edu.au/tbailey/papers/slamtute2.pdf}
+% 
+% 2009 review paper: \url{http://www.le2i.cnrs.fr/IMG/publications/2172_Muhammad_EI_2009.pdf}
+% 
+% % ====================
+% \section{Collision Avoidance}
+% % ====================
+% Old paper using quadtrees\cite{ghoshray1996comprehensive}
+% 
+% Bigdog \cite{raibert2008bigdog}
+% 
+% Springer handbook of robotics \cite{siciliano2008springer}: Vector field histograms, as described in Pouria's thesis \cite{talebifard2014risk}
+% 
+% 
+% % ====================
+% \section{Time Optimal Trajectory Planning}
+% % ====================
+% \cite{fiorini1996time}
