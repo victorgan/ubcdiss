@@ -19,47 +19,38 @@
 % studies
 
 % ====================
-\section{General Idea}
+\section{Problem formulation}
 % ====================
-We first address the problem of identifying a suitable parking spot for a
-wheelchair in an indoor environment. The identified parking spot will then be
-used as a goal state for a planner to subsequently move the robot to.
+We address the problem of determining a parking spot for a wheelchair.
+Specifically, we are concerned with identifying where in a room should a
+wheelchair be placed that minimizes inconvenience and obstructions and best
+coincides with human preference.
 
-We start with the following assumptions, for initial simplicity:
+[TODO figure]
+Let us start with examples to illustrate the problem and some desirable
+properties.
+Figure X shows an example floor plan, with various objects of different sizes
+and locations. We would like to find location to place the wheelchair, in green.
+Figure A shows one scenario: we would prefer placing the wheelchair in a corner
+out of the way, rather than in the middle of an open floor which may obstruct
+people's movements. Figure B shows another: we would like to place the
+wheelchair to allow for a additional wheelchairs to be placed beside it:
+effectively, we would like to place the wheelchair to be able to pack as much
+wheelchairs in the space as possible. Figure C shows that we would like to place
+wheelchairs only in places that can be reached, and in orientations aligned with
+walls.
+
+We start with the following assumptions:
 \begin{itemize}
-\item The algorithm will work in an indoor environment. Objects on the floor
+\item Objects in the room are typical to indoor office environments. These
 include but are not limited to: chairs, other wheelchairs, tables and cabinets.
-\item The algorithm will not deal with moving objects in the scene
+\item Objects will be static/non-moving
 \item The floor will be flat throughout (i.e. no ramps)
 \item The suitable parking spot in question is entirely in view of the camera.
 In practice this means the parking spot is visible to the RGB-D camera 
 the parking spot is not overshadowed by any obstacle.
 \end{itemize}
 
-
-
-% ====================
-\section{Problem formulation}
-% ====================
-
-[TODO clean up]
-Many methods formulate the problem of identifying a parking spot
-as a detection problem, where a parking spot is to be detected within the scene.
-We instead 
-We formulate the problem as follows: General Bayesian/MDP formulation?
-
-\subsection{Definitions}
-
-\begin{itemize}
-\item Configuration space
-\item Pointcloud space
-\item 2D Map space
-\item Ground Map
-\item Object Map
-\item Unknown Map
-\item Feasible states
-\item Desirability function
-\end{itemize}
 
 \subsection{Characteristics of a good parking spot}
 \begin{itemize}
@@ -80,11 +71,22 @@ We return to these characteristics during evaluation in section [TODO], where we
 develop quantatitive measures.
 
 
+
 \subsection{Our Approach}
+
+[TODO clean up]
+We formulate the problem by creating a reward function over the state space
+that characterizes the desirability of the state as a parking spot.
+TODO reinforcement learning terminology.
+
+% value function
+% quality function
+% reward function
+
 \begin{figure}
 \centering
 \includegraphics[width=3in]{figures/rgbdmap.png}
-\caption{Pipeline for choosing a suitable parking spot.
+\caption{(TODO larger image) Pipeline for choosing a suitable parking spot.
 The transition from point cloud data to a 2D environment map is described in
 \autoref{sec:processingPointCloud} and \autoref{sec:2dmap}. Generating feasible configurations from the
 environment map is described in \autoref{sec:feasibleparkingspot}. Selecting one
@@ -101,33 +103,6 @@ function is applied to choose an appropriate configuration from the feasible set
 
 
 
-% ====================
-\section{Data Set}
-\label{sec:rgbddataset}
-% ====================
-A data set of RGBD video is obtained by attaching an Asus Xtion Pro Live onto a
-(Wheelchair Model) power wheelchair. Obstacles such as chairs, other
-wheelchairs, tables and cabinets are laid out in an indoor office environment to
-simulate instances where a wheelchair would potentially park.
-
-[x] different instances are recorded. In each instance, the wheelchair starts
-from afar, and is drive into the parking spot, reversed out, then moved
-laterally and rotationally. At every point in the video, the position of the
-parking spot is within sight of the camera, with the assumption that the back-in
-algorithm will only be run if the wheelchair is already pointed in the general
-area.
-
-A 3D model of the wheelchair used is also obtained using the Kinect Fusion
-algorithm [cite]. This allows for precise simulations of how large the
-wheelchair is.
-
-\begin{figure}
-\centering
-\includegraphics[width=3in]{figures/rgbdwheelchair.png}
-\caption{RGB and Depth images as seen by the wheelchair. The objective is to
-identify a suitable location within the image for back-in parking.}
-\label{fig:rgbdwheelchair}
-\end{figure}
 
 
 % ====================
@@ -136,18 +111,18 @@ identify a suitable location within the image for back-in parking.}
 % ====================
 To make a map, we are inspired by the approaches of Holz \cite{holz2013towards}
 and Gritti \cite{gritti2014kinect} to detect obstacles based on their height
-from the ground plane. This will allow detection of obstacles regardless of
+from the ground plane. This allows detection of obstacles regardless of
 their shape.
 
-One may argue: why not go directly from RGB-D sensor data to classification of
-parking spots, instead of a pipeline approach?
-First, we will see that ground detection is fairly robust and computationally
-cheap: there is very little error in this preprocessing step.
-Second, RGB-D data varies quite a bit; there is no clear mapping from RGB-D
-point clouds to location of parking spots. A learning approach would require an
-overbearing amount of training examples.
+% One may argue: why not go directly from RGB-D sensor data to classification of
+% parking spots, instead of a pipeline approach?
+% First, we will see that ground detection is fairly robust and computationally
+% cheap: there is very little error in this preprocessing step.
+% Second, RGB-D data varies quite a bit; there is no clear mapping from RGB-D
+% point clouds to location of parking spots. A learning approach would require an
+% overbearing amount of training examples.
 
-First, the point cloud is downsampled using a voxelized grid approach with a 1mm
+First, the point cloud is downsampled using a voxelized grid approach with a 5 cm
 grid filter. This reduces the computational load and prevents excess weighting of
 certain volumes in the upcoming ground plane detection.
 
@@ -159,8 +134,8 @@ ground plane is needed for two reasons:
 it allows a 2D map to be taken relative to the ground plane, and an obstacle can
 be characterized by any point that resides above the ground plane.
 
-Ground plane detection is done on individual frames for robustness to changing
-angles of the camera.
+Ground plane detection is done on each frame independently for robustness to
+changing angles of the camera.
 Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC,
 which results in a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
 $ax + by + cz + d = 0$. Lines 7-9 highlight the modification with an additional
@@ -193,7 +168,7 @@ plane}
             \State $d \gets |p|$
         \EndIf
     \EndFor
-    \State ensure $bestPlane$ has a positive $y$ coefficient ($b$) for consistency
+    \State ensure $bestPlane$ has a positive $y$ coefficient ($b$) for consistency TODO clarify
 \EndFunction
 \Statex
 \Ensure{$bestPlane$, a 4-tuple $(a,b,c,d)$ that satisfies $ax + by + cz + d =
@@ -235,6 +210,7 @@ Experiment:
 \section{Generating a 2D Map}
 \label{sec:2dmap}
 % ====================
+TODO equations/formal description
 The 2D Map is generated by projecting the 3D ground-aligned point cloud onto the
 ground plane.
 Algorithm \autoref{alg:groundmapprojection} shows how the point cloud is
@@ -261,7 +237,7 @@ object pixels mutually exclusive.
 % unknown.
 
 \begin{algorithm}
-\caption{Ground Map Projection}
+\caption{TODO Ground Map Projection}
 \label{alg:groundmapprojection}
 \begin{algorithmic}[1]
 \Require{$P_{rotated}$, $gridStepSize$, $groundThreshold$}
@@ -316,9 +292,8 @@ where $\theta = 0$ is the angle of the wheelchair when the point cloud is
 captured. Possible values of $\theta$ range from $-10$ to $10$ degrees (TODO
 change).
 
-To determine if each configuration for all possible values of $x$, $y$ and
-$\theta$ is feasible, three checks are performed, as seen in algorithm
-\autoref{alg:feasibilitycheck}. 
+To determine if each configuration is feasible, three checks are performed, as
+seen in algorithm \autoref{alg:feasibilitycheck}. 
 
 The first check is to see if the wheelchair
 collides with any objects or is placed on areas not known to be ground. This
@@ -329,7 +304,7 @@ wheelchair's current configuration, the origin $(x_0,y_0,\theta_0)$. $(x_0,y_0)$
 is determined from the same transformation used in
 \autoref{sec:processingPointCloud} to align the ground plane to the x-y axes.
 $\theta_0$ is set to $0$. A flood-fill algorithm is then performed on the
-feasible configuration set obtained in the first check to determine all connecting
+feasible configuration set obtained in the first check to determine all connect
 feasible configurations to the origin $(x_0,y_0,\theta_0)$. Two feasible
 configurations are deemed connnected if they are within one manhattan unit of
 each other in $x-y-\theta$ space.
@@ -342,10 +317,10 @@ primitive transition curves of a differential drive system
 
 
 The third check ensures the entirety of the wheelchair falls within the bounds
-of the map.
+of the map. TODO better description.
 
 \begin{algorithm}
-\caption{Feasibility Check}
+\caption{TODO Feasibility Check}
 \label{alg:feasibilitycheck}
 \begin{algorithmic}[1]
 \Require{$groundMap, wheelChairMaps, origin$}
@@ -353,7 +328,7 @@ of the map.
 \Function{FeasibleStates}{$groundMap, wheelChairMaps, origin$}
     \State $feasibleStates \gets$ 1 for all states
     \For{each configuration $c \in$ Configuration Space}
-        \State $w \gets wheelChairMaps(c)$
+        \State $w \gets wheelChairMaps(c)$ TODO ?
         \State $feasibleStates(c) \gets$ 0 if $w$ is not enclosed in $groundMap$
         \State $feasibleStates(c) \gets$ 0 if $c$ is not connected in configuration space to $origin$
         \State $feasibleStates(c) \gets$ 0 if $w$ collides with edge of map
@@ -504,6 +479,34 @@ different values for $\theta$. Blue (dark) represents low desirability, yellow
 Efficiency of algorithms.
 
 % ====================
+\section{Data Set}
+\label{sec:rgbddataset}
+% ====================
+A data set of RGBD video is obtained by attaching an Asus Xtion Pro Live onto a
+(Wheelchair Model) power wheelchair. Obstacles such as chairs, other
+wheelchairs, tables and cabinets are laid out in an indoor office environment to
+simulate instances where a wheelchair would potentially park.
+
+[x] different instances are recorded. In each instance, the wheelchair starts
+from afar, and is drive into the parking spot, reversed out, then moved
+laterally and rotationally. At every point in the video, the position of the
+parking spot is within sight of the camera, with the assumption that the back-in
+algorithm will only be run if the wheelchair is already pointed in the general
+area.
+
+A 3D model of the wheelchair used is also obtained using the Kinect Fusion
+algorithm [cite]. This allows for precise measurements of how large the
+wheelchair is.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{figures/rgbdwheelchair.png}
+\caption{RGB and Depth images as seen by the wheelchair. The objective is to
+identify a suitable location within the image for back-in parking.}
+\label{fig:rgbdwheelchair}
+\end{figure}
+
+% ====================
 \section{Experiments}
 % ====================
 
@@ -532,6 +535,11 @@ instead is determined by contextual cues surrounding it.
 
 
 \subsection{Outdoor Parking Lot Detection}
+
+Many methods formulate the problem of identifying a parking spot
+as a detection problem, where a parking spot is to be detected within the scene
+using supervised classification techniques.
+
 Work has been done to determine locations of parking spots for cars in car lots
 [citations]. 
 \cite{wu2006parking, true2007vacant}
@@ -636,3 +644,21 @@ social benefit of the users during the parking slot assignment.
 % ====================
 \section{Conclusion}
 % ====================
+
+% ======================
+\endinput
+Any text after an \endinput is ignored.
+% ======================
+\subsection{Definitions}
+TODO put closer to where it's used
+
+\begin{itemize}
+\item Configuration space
+\item Pointcloud space
+\item 2D Map space
+\item Ground Map
+\item Object Map
+\item Unknown Map
+\item Feasible states
+\item Desirability function
+\end{itemize}
