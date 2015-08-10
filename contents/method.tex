@@ -48,6 +48,8 @@ as a detection problem, where a parking spot is to be detected within the scene.
 We instead 
 We formulate the problem as follows: General Bayesian/MDP formulation?
 
+Goal probability map
+
 \subsection{Definitions}
 
 \begin{itemize}
@@ -569,10 +571,21 @@ external pre-determined parking lot spots.
 
 
 \subsection{Packing Problems}
-This problem also has similarities to packing problems. The general packing
+This problem also has similarities to packing problems \cite{dyckhoff1990typology}.
+
+The general packing
 problem tries to, given a set of rectangular objects, pack as many as possible
 in a larger rectanle. In our case, we are given one wheelchair, and we may wish
 to pack it in a space that is least obstrusive to other areas.
+
+Pallet loading problem \cite{martins2008solving}:
+Pallet Loading Problem (PLP). PLP max- imizes the number of boxes placed on a
+rectangular pallet. All boxes have identical rectangular dimensions and, when
+placed, must be located completely within the pallet. Boxes may be rotated 90°
+so long as they are placed with edges par- allel to the pallet’s edges. The set
+of all PLP instances with an area ratio (pallet area divided by box area) less
+than 101 boxes can be represented by 3,080,730 equivalent classes.
+
 
 TODO researchlog/thesis.org for references.
 
@@ -632,6 +645,42 @@ social benefit of the users during the parking slot assignment.
 
 \subsection{Path planning with ill-defined goal states}
 "Path Planning on Grid Maps with Unknown Goal Poses"
+
+Quote from \cite{javdani2015shared}:
+Maximum  entropy  inverse  optimal  control  (MaxEnt  IOC)
+methods  have  been  shown  to  be  effective  for  goal  predic-
+tion [28, 29, 30, 7]
+
+Quote from \cite{javdani2015shared}:
+Others have approached the prediction problem by utilizing
+various machine learning methods. Koppula and Saxena [15]
+extend  conditional  random  fields  (CRFs)  with  object  affor-
+dances  to  predict  potential  human  motions.  Wang  et  al.  [23]
+learn  a  generative  predictor  by  extending  Gaussian  Process
+Dynamical Models (GPDMs) with a latent variable for inten-
+tion. Hauser [11] utilizes a Gaussian mixture model over task
+types  (e.g.  reach,  grasp),  and  predicts  both  the  task  type  and
+continuous  parameters  for  that  type  (e.g.  movements)  using
+Gaussian mixture autoregression.
+
+\subsection{Shared Control}
+Hindsight optimization to choose and move between goal states
+\cite{javdani2015shared}.
+
+Quote from \cite{javdani2015shared}:
+Recently,  Hauser  presented  a  system  which  provides
+assistance  while  reasoning  about  the  entire  distribution  over
+goals.  Given  the  current  distribution,  the  planner  optimizes
+for  a  trajectory  that  minimizes  the  expected  cost,  assuming
+that no further information will be gained. After executing the
+plan for some time, the distribution is updated by the predictor,
+and a new plan is generated for the new distribution. In order
+to  efficiently  compute  the  trajectory,  it  is  assumed  that  the
+cost function corresponds to squared distance, resulting in the
+calculation decomposing over goals. In contrast, our model is
+more  general,  enabling  any  cost  function  for  which  a  value
+function  can  be  computed.  Furthermore,  our  POMDP  model
+enables us to reason about future human actions.  \cite{hauser2013recognition}
 
 % ====================
 \section{Conclusion}

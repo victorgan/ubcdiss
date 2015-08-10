@@ -99,7 +99,7 @@ and the trajectory of the wheelchair will be updated based on this.
 \end{figure}   % --------------------------------------
 
 % ====================
-\section{Literature Review}
+\section{Related Work}
 \label{sec:backinginlitreview}
 % ====================
 One way is to have a fixed, open-loop trajectory. This method is very old and
@@ -112,6 +112,26 @@ Angus's paper using PID
 \subsection{Localization}
 Talebifard \cite{talebifard2014risk} creates an egocentric map to avoid
 localization.
+
+\subsection{Real-time Motion Planning}
+
+From \cite{hauser2013recognition}:
+Sampling-based motion planners such as Probabilistic Roadmaps (PRMs) and
+Rapidly-Exploring Random Trees (RRTs) are effective at planning collision-free
+motion for high-dimensional robot systems ( LaValle 2006), and have also been
+successfully applied to hard real-time planing for 2D helicopters ( Frazzoli et
+al. 2002) and ground vehicles ( Petti and Fraichard 2005). Recently they have
+been applied to teleoperation interfaces for robot manipulator arms ( Hauser
+2011). But these works have traditionally focused on finding feasible paths
+rather than optimal ones.  Sampling-based approaches have been recently
+developed for the optimal motion planning problem ( Karaman and Frazzoli 2010),
+but they have not yet been applied to time- varying cost functions and moreover
+converge too slowly for real-time use. An alternative approach is numerical
+opti- mization over a trajectory parameterization ( Bobrow et al.  2001).
+Optimization approaches can achieve optimality with a fast convergence rate,
+albeit only locally. Our hybrid plan- ner combines the strength of
+sampling-based and numeri- cal approaches and is designed specifically to
+produce high- quality paths quickly for a broad class of cost functions.
 
 % ====================
 \section{Implementation Details}
