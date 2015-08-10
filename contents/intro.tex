@@ -142,46 +142,9 @@ park on an open floorspace, how do you back into said parking spot.
 
 Chapter X describes background and preliminary notation used.
 
-\section{Hardware}
-We choose and fix the hardware used beforehand.
+Often determining the goal state, localization/mapping, planning and movement
+are all done separately. We introduce an all-in-one solution.
 
-We use an RGB-D sensor due to its suitability to the problem:
-it works well indoors, where the target users will be using the wheelchairs; it
-is cost effective; it provides depth information with adequate accuracy.
-
-We use only one camera. This is for simplicity. Each camera saturates its USB
-controller, hence a computer must have as many USB controllers as cameras.
-An additional calibration step to register the information, increasing the
-computational costs even further than the linear factor. 
-One can argue a limitation of using one RGB-D sensor is the depth measurements
-have a range of around 0.6 m to 8 m, with a field of view of 43 degrees
-vertically by 57 degrees horizontally (TODO better reference) \cite{endres2014catadioptric},
-comparatively limited to lidars with fields of view of 180 degrees. Some work
-\cite{endres2014catadioptric} has been done using two mirrors to split the field
-of view of a single camera to cover both the front and rear view. Our work
-sticks to a single camera for simplicity, though it can be naturally extended.
-
-We mount the RGB-D camera downwards. However, we do not rely on a specific angle
-to keep the solutions generalizable to systems that might have different camera
-angles. The only assumption is the ground plane is visible.
-
-We use an Asus RGB-D camera as it is smaller and less obtrusive than the Kinect
-and does not require an additional power plug; it gets its power entirely from
-USB.
-
-
-We use a (TODO model) by (TODO) 
-
-We use a Lenovo W530 laptop with 
-\begin{itemize}
-\item Intel Core i7-3720QM Processor
-\item 8GB RAM
-\item 120GB SSD
-\item NVIDIA Quadro K1000M Graphical Processing Unit
-\item Two dedicated USB controllers for USB 2.0 and USB 3.0
-\item Ubuntu 14.04 64-bit
-\item Robotic Operating System (Indigo release)
-\end{itemize}
 
 
 % ======================

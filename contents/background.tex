@@ -2,72 +2,12 @@
 \chapter{Background}
 % ===================================================
 
-% % ===================================================
-% \section{Robotics Pipelines}
-% % ===================================================
-% 
-% % ---------------------------------------------------
-% \subsection{Robotic Operating System}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Robotic Operating System}
-% % ---------------------------------------------------
-% 
-% % ===================================================
-% \section{Modeling}
-% % ===================================================
-% 
-% % ---------------------------------------------------
-% \subsection{Classification}
-% % ---------------------------------------------------
-% Modeling 
-% 
-% % ---------------------------------------------------
-% \subsection{Bayesian Stuff}
-% % ---------------------------------------------------
-% Chiu-Liu Trees
-% 
-% % ---------------------------------------------------
-% \subsection{Markov Chains, MDPs, POMDPs}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Reinforcement Learning}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Path Planning}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Bandit Problems}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Feasibility}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Game Theory}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Control}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Rotations}
-% % ---------------------------------------------------
-% 
-% % ---------------------------------------------------
-% \subsection{Distance Transforms and Geodesics}
-% % ---------------------------------------------------
 
 % ===================================================
 \section{Notation for Traditional Path Planning}
 % ===================================================
 
+[TODO avoid definition notation]
 \theoremstyle{definition}
 \begin{definition}{Maximal Reachable Set}
 A fibration is a mapping between two topological spaces that has the homotopy lifting property for every space $X$.
@@ -136,88 +76,203 @@ Temp
 Temp
 \end{definition}
 
+% ===================================================
+\chapter{Related Work}
+% ===================================================
+% show my problem is unsolved
+% • show my problem is interesting
+% • show my idea works
+% • show how my idea compares to other ideas
+% • No related work yet! Include at end.
+% – Problem 1: describing alternative approaches gets between the reader
+% and your idea (I feel tired)
+% – Problem 2: the reader knows nothing about the problem yet; so your
+% (carefully trimmed) description of various technical tradeoffs is abso-
+% lutely incomprehensible (I feel stupid)
+% – instead, Concentrate single-mindedly on a narrative that
+% ∗ Describes the problem, and why it is interesting
+% ∗ Describes your idea
+% ∗ Defends your idea, showing how it solves the problem, and filling
+% out the details
+% ∗ On the way, cite relevant work in passing, but defer discussion to
+% the end
+% • show how my idea compares to other ideas
+% • Be generous to the competition. In his inspiring paper [Foo98] Foogle shows....
+% We develop his foundation in the following ways...
+% • Giving credit to others does not diminish the credit you get from your paper
+% • Acknowledge weaknesses in your approach
+% • Failing to give credit to others can kill your paper: You don’t know that it’s
+% an old idea (bad) or You do know, but are pretending it’s yours (very bad)
 
-% % ===================================================
-% \chapter{Related Work}
-% % ===================================================
-% % show my problem is unsolved
-% % • show my problem is interesting
-% % • show my idea works
-% % • show how my idea compares to other ideas
-% % • No related work yet! Include at end.
-% % – Problem 1: describing alternative approaches gets between the reader
-% % and your idea (I feel tired)
-% % – Problem 2: the reader knows nothing about the problem yet; so your
-% % (carefully trimmed) description of various technical tradeoffs is abso-
-% % lutely incomprehensible (I feel stupid)
-% % – instead, Concentrate single-mindedly on a narrative that
-% % ∗ Describes the problem, and why it is interesting
-% % ∗ Describes your idea
-% % ∗ Defends your idea, showing how it solves the problem, and filling
-% % out the details
-% % ∗ On the way, cite relevant work in passing, but defer discussion to
-% % the end
-% % • show how my idea compares to other ideas
-% % • Be generous to the competition. In his inspiring paper [Foo98] Foogle shows....
-% % We develop his foundation in the following ways...
-% % • Giving credit to others does not diminish the credit you get from your paper
-% % • Acknowledge weaknesses in your approach
-% % • Failing to give credit to others can kill your paper: You don’t know that it’s
-% % an old idea (bad) or You do know, but are pretending it’s yours (very bad)
+% ====================
+\section{Parking Lot Detection}
+% ====================
+% Wang \cite{wang2014automatic}
+% Jung \cite{jung2014semiautomatic}
 % 
-% % ====================
-% \section{Parking Lot Detection}
-% % ====================
-% % Wang \cite{wang2014automatic}
-% % Jung \cite{jung2014semiautomatic}
-% % 
-% % Pouria's thesis \cite{talebifard2014risk}
-% % Talk: \url{https://www.youtube.com/watch?v=Db7EhLYf-Yk#t=1h11m07s}
-% % 
-% % 
-% % file:papers/jiang1999sensor.pdf
-% % Basic old paper on parallel parking. Uses ultrasonic sensor, then
-% % fixed planning.
-% % 
-% % file:papers/fairus2011development.pdf
-% % Old paper. Scanning methods.
-% % 
-% % file:papers/wang2013automatic.pdf
-% % Newish lit review of automatic parking
-% % 
-% % file:papers/abad2007parking.pdf
-% % Parking space detection using 3d vision. Parallel parking
-% % 
-% % file:papers/lalonde2012single.pdf
-% % CVPR workshop paper.
-% % 
-% % file:papers/suhr2010automatic.pdf
-% % Good! Solving my problem, but with a laser rangefinder.
-% % found from: http://www.mathworks.com/matlabcentral/answers/126413-how-to-detect-free-spots-in-a-parking-area
-% % 
-% % file:assets/WheelchairGuide.pdf
-% 
-% % ====================
-% \section{SLAM}
-% % ====================
-% 
-% LSD-Slam and PTAM for monocular seem to be state-of-art: \url{http://vision.in.tum.de/research/lsdslam}
-% 
-% review paper: \url{http://www-personal.acfr.usyd.edu.au/tbailey/papers/slamtute2.pdf}
-% 
-% 2009 review paper: \url{http://www.le2i.cnrs.fr/IMG/publications/2172_Muhammad_EI_2009.pdf}
-% 
-% % ====================
-% \section{Collision Avoidance}
-% % ====================
-% Old paper using quadtrees\cite{ghoshray1996comprehensive}
-% 
-% Bigdog \cite{raibert2008bigdog}
-% 
-% Springer handbook of robotics \cite{siciliano2008springer}: Vector field histograms, as described in Pouria's thesis \cite{talebifard2014risk}
+% Pouria's thesis \cite{talebifard2014risk}
+% Talk: \url{https://www.youtube.com/watch?v=Db7EhLYf-Yk#t=1h11m07s}
 % 
 % 
-% % ====================
-% \section{Time Optimal Trajectory Planning}
-% % ====================
-% \cite{fiorini1996time}
+% file:papers/jiang1999sensor.pdf
+% Basic old paper on parallel parking. Uses ultrasonic sensor, then
+% fixed planning.
+% 
+% file:papers/fairus2011development.pdf
+% Old paper. Scanning methods.
+% 
+% file:papers/wang2013automatic.pdf
+% Newish lit review of automatic parking
+% 
+% file:papers/abad2007parking.pdf
+% Parking space detection using 3d vision. Parallel parking
+% 
+% file:papers/lalonde2012single.pdf
+% CVPR workshop paper.
+% 
+% file:papers/suhr2010automatic.pdf
+% Good! Solving my problem, but with a laser rangefinder.
+% found from: http://www.mathworks.com/matlabcentral/answers/126413-how-to-detect-free-spots-in-a-parking-area
+% 
+% file:assets/WheelchairGuide.pdf
+
+% ====================
+\section{SLAM}
+% ====================
+
+LSD-Slam and PTAM for monocular seem to be state-of-art: \url{http://vision.in.tum.de/research/lsdslam}
+
+review paper: \url{http://www-personal.acfr.usyd.edu.au/tbailey/papers/slamtute2.pdf}
+
+2009 review paper: \url{http://www.le2i.cnrs.fr/IMG/publications/2172_Muhammad_EI_2009.pdf}
+
+% ====================
+\section{Collision Avoidance}
+% ====================
+Old paper using quadtrees\cite{ghoshray1996comprehensive}
+
+Bigdog \cite{raibert2008bigdog}
+
+Springer handbook of robotics \cite{siciliano2008springer}: Vector field histograms, as described in Pouria's thesis \cite{talebifard2014risk}
+
+
+% ====================
+\section{Time Optimal Trajectory Planning}
+% ====================
+\cite{fiorini1996time}
+
+\section{Hardware}
+
+[TODO photo]
+
+We choose and fix the hardware used beforehand.
+
+We use an RGB-D sensor due to its suitability to the problem:
+it works well indoors, where the target users will be using the wheelchairs; it
+is cost effective; it provides depth information with adequate accuracy.
+
+We use only one camera. This is for simplicity. Each camera saturates its USB
+controller, hence a computer must have as many USB controllers as cameras.
+An additional calibration step to register the information, increasing the
+computational costs even further than the linear factor. 
+One can argue a limitation of using one RGB-D sensor is the depth measurements
+have a range of around 0.6 m to 8 m, with a field of view of 43 degrees
+vertically by 57 degrees horizontally (TODO better reference) \cite{endres2014catadioptric},
+comparatively limited to lidars with fields of view of 180 degrees. Some work
+\cite{endres2014catadioptric} has been done using two mirrors to split the field
+of view of a single camera to cover both the front and rear view. Our work
+sticks to a single camera for simplicity, though it can be naturally extended.
+
+We mount the RGB-D camera downwards. However, we do not rely on a specific angle
+to keep the solutions generalizable to systems that might have different camera
+angles. The only assumption is the ground plane is visible.
+
+We use an Asus RGB-D camera as it is smaller and less obtrusive than the Kinect
+and does not require an additional power plug; it gets its power entirely from
+USB.
+
+
+We use a (TODO model) by (TODO) 
+
+We use a Lenovo W530 laptop with 
+\begin{itemize}
+\item Intel Core i7-3720QM Processor
+\item 8GB RAM
+\item 120GB SSD
+\item NVIDIA Quadro K1000M Graphical Processing Unit
+\item Two dedicated USB controllers for USB 2.0 and USB 3.0
+\item Ubuntu 14.04 64-bit
+\item Robotic Operating System (Indigo release)
+\end{itemize}
+
+% ======================
+\endinput
+Any text after an \endinput is ignored.
+% ======================
+% ===================================================
+\section{Robotics Pipelines}
+% ===================================================
+
+% ---------------------------------------------------
+\subsection{Robotic Operating System}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Robotic Operating System}
+% ---------------------------------------------------
+
+% ===================================================
+\section{Modeling}
+% ===================================================
+
+% ---------------------------------------------------
+\subsection{Classification}
+% ---------------------------------------------------
+Modeling 
+
+% ---------------------------------------------------
+\subsection{Bayesian Stuff}
+% ---------------------------------------------------
+Chiu-Liu Trees
+
+% ---------------------------------------------------
+\subsection{Markov Chains, MDPs, POMDPs}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Reinforcement Learning}
+% ---------------------------------------------------
+Value function, reward function
+
+% ---------------------------------------------------
+\subsection{Path Planning}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Bandit Problems}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Feasibility}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Game Theory}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Control}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Rotations}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Distance Transforms and Geodesics}
+% ---------------------------------------------------
+
+% ---------------------------------------------------
+\subsection{Visual Servoing}
+% ---------------------------------------------------
+% https://en.wikipedia.org/wiki/Visual_servoing
