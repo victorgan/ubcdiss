@@ -131,17 +131,26 @@ computationally efficient or even real-time?
 In this thesis I focus on two of these questions: how do you define a place to
 park on an open floorspace, how do you back into said parking spot.
 
-(Contributions) In this paper we put this point on a further basis:
+This thesis introduces a method that infers a belief over possible goal states
+and uses visual servoing to incrementally plan and move a robot to a more
+desirable state. The method runs in real-time, only relies on an RGBD camera
+mounted relatively upwards facing and horizontal and without needing odometry,
+and is robust to large errors on robot and control models. Our main
+contributions are:
+
 \begin{itemize}
-\item Introduce a pipeline that picks a place to park
-\item Introduce an efficient algorithm to perform (+,min)-convolutions
-\item Validates algorithm with empirical performance measures
-\item Introduce a pipeline that backs-in a wheelchair
-\item Validates the algorithm with real world experimental results
+\item An obstruction-minimizing heuristic to discriminate
+between robot placements
+\item An efficient general method for combining two distance transforms using
+(+,min)-convolutions
+\item A memory-free, anytime fast-loop visual feedback motion planning framework
+robust to model errors
+\item Combining the above, introducing a new framework that elegantly couples
+goal state inference, mapping and control in real-time
 \end{itemize}
 
-Chapter X describes background and preliminary notation used.
-
+Chapter X describes background and preliminary notation used. Chapter Y
+describes etc.
 Often determining the goal state, localization/mapping, planning and movement
 are all done separately. We introduce an all-in-one solution.
 
@@ -176,3 +185,11 @@ We address the problem: Where
 \paragraph{Who's it for?} Me.
 
 TODO use this \cite{viswanathan2011navigation}
+
+
+
+\item Introduce a pipeline that picks a place to park
+\item Introduce an efficient algorithm to perform (+,min)-convolutions
+\item Validates algorithm with empirical performance measures
+\item Introduce a pipeline that backs-in a wheelchair
+\item Validates the algorithm with real world experimental results

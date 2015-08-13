@@ -15,6 +15,18 @@ A fibration is a mapping between two topological spaces that has the homotopy li
 
 Taken from page 17 of \cite{lavalle2006planning}:
 
+
+(page 29, formulation 2.1 of \cite{lavalle2006planning}:
+\subsection{Discrete Feasible Planning}
+\begin{description}
+  \item[State Space] non-empty state space X. In our case, we have
+  $SE(2)$ (TODO Check), $(x,y,\theta)$
+  \item[Initial State] a state in $X$
+  \item[Goal Set] a subset of $X$
+  \item[Action Space] The second item
+  \item[State Transition Function] The third etc \ldots
+\end{description}
+
 \begin{definition}{State}
 Temp
 \end{definition}
@@ -145,6 +157,13 @@ LSD-Slam and PTAM for monocular seem to be state-of-art: \url{http://vision.in.t
 review paper: \url{http://www-personal.acfr.usyd.edu.au/tbailey/papers/slamtute2.pdf}
 
 2009 review paper: \url{http://www.le2i.cnrs.fr/IMG/publications/2172_Muhammad_EI_2009.pdf}
+
+We avoid the use of a global map. In long-term care environments, tables,
+chairs, parked wheelchairs, and other objects are frequently moved around,
+requiring consistently updating sensing. Instead, we use a local map in a tight
+feedback loop. We treat each frame independently. This memoryless pipeline has
+many desirable properties: it inherently adapts to quick changes and can be
+stopped and started anytime.
 
 % ====================
 \section{Collision Avoidance}

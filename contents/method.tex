@@ -30,15 +30,18 @@ coincides with human preference.
 Let us start with examples to illustrate the problem and some desirable
 properties.
 Figure X shows an example floor plan, with various objects of different sizes
-and locations. We would like to find location to place the wheelchair, in green.
-Figure A shows one scenario: we would prefer placing the wheelchair in a corner
-out of the way, rather than in the middle of an open floor which may obstruct
-people's movements. Figure B shows another: we would like to place the
-wheelchair to allow for a additional wheelchairs to be placed beside it:
-effectively, we would like to place the wheelchair to be able to pack as much
-wheelchairs in the space as possible. Figure C shows that we would like to place
-wheelchairs only in places that can be reached, and in orientations aligned with
-walls.
+and locations: other wheelchairs, tables, chairs and cabinets. We would like to
+find location to place the wheelchair, in green.  Figure A shows one scenario:
+we would prefer placing the wheelchair in a corner out of the way, rather than
+in the middle of an open floor which may obstruct people's movements.  In group
+gatherings at long-term care facilities, wheelchairs tend to be packed along the
+sides of a room.
+Figure B
+shows another: we would like to place the wheelchair to allow for a additional
+wheelchairs to be placed beside it. This makes more efficient use of space.
+Figure C shows that we would like to place wheelchairs only in places that can
+be reached, and to find a parking spot with orientations aligned with walls, to
+also make the most of the given space.
 
 We start with the following assumptions:
 \begin{itemize}
@@ -46,41 +49,17 @@ We start with the following assumptions:
 include but are not limited to: chairs, other wheelchairs, tables and cabinets.
 \item Objects will be static/non-moving
 \item The floor will be flat throughout (i.e. no ramps)
-\item The suitable parking spot in question is entirely in view of the camera.
-In practice this means the parking spot is visible to the RGB-D camera 
-the parking spot is not overshadowed by any obstacle.
+\item The user will have pre-moved their wheelchair to direct the camera to the
+general area of where they wish to park. This avoids dealing with shared control
+directly; the user's intentions are given a priori through the current
+wheelchair position.
+\item Subsequently, a
+parking spot is entirely in view of the sensor, with no objects obstructing any
+part of the parking spot. This assumption may not hold for parking spots in
+tight corners.
 \end{itemize}
 
 
-<<<<<<< HEAD
-
-% ====================
-\section{Problem formulation}
-% ====================
-
-[TODO clean up]
-Many methods formulate the problem of identifying a parking spot
-as a detection problem, where a parking spot is to be detected within the scene.
-We instead 
-We formulate the problem as follows: General Bayesian/MDP formulation?
-
-Goal probability map
-
-\subsection{Definitions}
-
-\begin{itemize}
-\item Configuration space
-\item Pointcloud space
-\item 2D Map space
-\item Ground Map
-\item Object Map
-\item Unknown Map
-\item Feasible states
-\item Desirability function
-\end{itemize}
-
-=======
->>>>>>> a62bca0eed72f171d5aa9153c666b0dfa38e44e2
 \subsection{Characteristics of a good parking spot}
 \begin{itemize}
 \item Minimize 'useless' space, space that another wheelchair cannot fit in 
@@ -104,7 +83,7 @@ develop quantatitive measures.
 \subsection{Our Approach}
 
 [TODO clean up]
-We formulate the problem by creating a reward function over the state space
+We formulate the problem by creating a belief over the state space
 that characterizes the desirability of the state as a parking spot.
 TODO reinforcement learning terminology.
 
@@ -154,22 +133,32 @@ their shape.
 First, the point cloud is downsampled using a voxelized grid approach with a 5 cm
 grid filter. This reduces the computational load and prevents excess weighting of
 certain volumes in the upcoming ground plane detection.
-
-Next, parameter estimation must be done to estimate the ground plane. Multiple methods
-exist, including RANSAC, Hough transform, and M-estimators
-\cite{holz2013towards}.
-We use a modified version of RANSAC to estimate the ground plane. The
-ground plane is needed for two reasons:
-it allows a 2D map to be taken relative to the ground plane, and an obstacle can
-be characterized by any point that resides above the ground plane.
+Next, we estimate the parameters of a ground plane. 
+The ground plane is needed for two reasons: it allows a 2D map to be easily
+created aligned to the ground plane (\autoref{sec:2dmap}), and allows an
+obstacle to be characterized by points above a certain distance above
+the ground plane.
+Multiple methods exist, including RANSAC \cite{fischler1981random}, the Hough
+transform, and M-estimators \cite{holz2013towards}. We use a modified version
+of RANSAC. 
 
 Ground plane detection is done on each frame independently for robustness to
 changing angles of the camera.
-Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC,
-which results in a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
-$ax + by + cz + d = 0$. Lines 7-9 highlight the modification with an additional
-constraint to avoid detecting vertical planar surfaces (i.e. walls).
+Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC.
+Which ingests a point cloud $P$ of $n$ points in $\mathbb{R}^3$, and three
+parameters: $k$, the number of iterations of testing a a new plane, $t$, the
+threshold in metres in which points are considered part of the plane, and
+$\theta_{max}$, the maximum inclination angle of possible ground planes.
+Point cloud $P$ follows the format of a point cloud from an RGBD camera acquired
+using the `openni2\_camera' package in ROS. This means the positive y-axis is
+pointed roughly upwards in world coordinates, with the positive z-axis pointing
+away from the camera along the horizontal plane of the camera.
 
+The result is a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
+$ax + by + cz + d = 0$. Lines 7-9 highlight the additional constraint to avoid
+detecting vertical planar surfaces (i.e. walls). Lines 16-18 ensure the ground
+plane has a normal vector pointing upwards in the world space, standardizing any
+ambiguity in defining a plane.
 
 \begin{algorithm}
 \caption{Modified RANSAC}
@@ -197,7 +186,9 @@ plane}
             \State $d \gets |p|$
         \EndIf
     \EndFor
-    \State ensure $bestPlane$ has a positive $y$ coefficient ($b$) for consistency TODO clarify
+    \If{the vector normal to $bestPlane$ has a negative $y$ coeficcient}
+        \State flip the sign of the $y$ coefficient of $bestPlane$ 
+    \EndIf
 \EndFunction
 \Statex
 \Ensure{$bestPlane$, a 4-tuple $(a,b,c,d)$ that satisfies $ax + by + cz + d =
@@ -205,10 +196,20 @@ plane}
 \end{algorithmic}
 \end{algorithm}
 
-The coordinate system for the point cloud is then rotated so the resulting
-ground plane is aligned with the x-y plane. \autoref{fig:pointclouds} shows an
-example of the detected ground plane and the rotation to align the ground plane
-to the x-y plane.
+
+We then rotate the point cloud $P$ to $P_{rotated}$ so the ground plane is
+aligned with the x-y plane, the z-axis points upwards, the y-axis is the
+direction the camera is facing, and the x-axis is chosen to complete the
+right-handed reference frame. Doing so allows $P_{rotated}$ to be trivially
+projected onto the ground plane.
+
+\autoref{fig:pointclouds} shows an
+example of the original point cloud $P$, where the positive z-axis is the
+direction of depth from the camera, the y-axis points upwards in the world
+frame, and the x-axis completes a right-handed reference frame. The detected
+ground plane using Algorithm \ref{alg:modifiedRansac} is shown. The rotated
+point cloud $P_{rotated}$ is shown on the right, with the ground plane aligned
+with the x-y plane.
 
 \begin{figure}
 \centering
@@ -219,31 +220,31 @@ Downsampled point cloud with ground plane detected. Right: Rotated point cloud.}
 \end{figure}
 
 % ====================
-\subsection{Rotation Matrix}
-% ====================
-TODO Rotation matrix equations
-
-% ====================
-\subsection{Ground Plane Detection Evaluation}
-% ====================
-Experiment: 
-\begin{itemize}
-\item Repeat for 2 videos: flat ground, going on ramps
-\item check if first and last frames are correct
-\item see change in parameters/angle of ground. Plot
-\item state accuracy
-\item test for speed
-\end{itemize}
-
-% ====================
 \section{Generating a 2D Map}
 \label{sec:2dmap}
 % ====================
-TODO equations/formal description
-The 2D Map is generated by projecting the 3D ground-aligned point cloud onto the
+We generate a 2D Map by projecting the 3D ground-aligned point cloud onto the
 ground plane.
+We classify each position on the 2D map as an object, the ground, or unknown.
+Object and unknown classes are separated for use in
+\autoref{sec:choosingparkingspot}.
+
 Algorithm \autoref{alg:groundmapprojection} shows how the point cloud is
-converted to 2D histograms of object and ground locations. 
+converted to a 2D map. It takes in the ground-aligned point cloud $P_{rotated}$
+and two parameters: $gridStepSize$, a scalar in metres per pixel representing
+the resolution of the map, and $groundThreshold$, the max height in metres that
+a point can be considered part of the ground. This should be roughly the same
+order of magnitude of $t$ from Algorithm \ref{alg:modifiedRansac}.
+
+Let $p = (x_p, y_p, z_p) \in P_{rotated}$ be a of point in $\mathbb{R}^3$, with
+$z_p$ representing the height above the ground for each point. Lines X to Y show
+2D histograms are initialized to capture the location of ground and object
+points. The histogram bounds are defined by taking the extremum points in both
+the x and y dimensions.
+
+
+
+
 A Gaussian blur with
 a standard deviation of 0.7 is applied to filter out holes due to noise and
 include a safety buffer. This is binarized on lines 12 and 13 by thresholding at
@@ -272,6 +273,10 @@ object pixels mutually exclusive.
 \Require{$P_{rotated}$, $gridStepSize$, $groundThreshold$}
 \Statex
 \Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
+    \State $LB_x = \min_{p \in P_{rotated}}(x_p)$
+    \State $UB_x = \max_{p \in P_{rotated}}(x_p)$
+    \State $LB_y = \min_{p \in P_{rotated}}(y_p)$
+    \State $UB_y = \max_{p \in P_{rotated}}(y_p)$
     \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
     \State $objectMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
     \For{each point $p \in P_{rotated}$}
@@ -332,7 +337,13 @@ The second check is to determine if each configuration can be reached from the
 wheelchair's current configuration, the origin $(x_0,y_0,\theta_0)$. $(x_0,y_0)$
 is determined from the same transformation used in
 \autoref{sec:processingPointCloud} to align the ground plane to the x-y axes.
-$\theta_0$ is set to $0$. A flood-fill algorithm is then performed on the
+$\theta_0$ is set to $0$. 
+This state is dilated to include a set of states within a 1 m radius: if any
+state is connected to a state within 1 m of the wheelchair, it is deemed
+feasible. This is done to accomodate for the minimum depth of the RGBD sensor.
+
+
+A flood-fill algorithm is then performed on the
 feasible configuration set obtained in the first check to determine all connect
 feasible configurations to the origin $(x_0,y_0,\theta_0)$. Two feasible
 configurations are deemed connnected if they are within one manhattan unit of
@@ -340,9 +351,10 @@ each other in $x-y-\theta$ space.
 Then, feasible configurations from the first check that have no feasible
 connecting path to the origin are deemed unreachable and discarded. 
 This simplification assumes the possible transitions between states are a one
-unit change in $x$, $y$ or $\theta$ (in effect, a holonomic system), instead of
-primitive transition curves of a differential drive system
-\cite{balkcom2002time}. The ease of computation justifies this choice.
+unit change in $x$, $y$ or $\theta$ (in effect, a holonomic system). 
+Primitive transition curves of a differential drive system
+\cite{balkcom2002time} has been developed, but this assumes no objects present.
+The ease of computation justifies this choice.
 
 
 The third check ensures the entirety of the wheelchair falls within the bounds
@@ -379,15 +391,15 @@ feasible configurations of the wheelchair}
 Given the set of feasible parking spots, we must now choose one of them. What
 defines a good parking spot? One could pose this as a supervised learning
 problem, given many expert-labeled parking spots on different feasible
-configuration sets.  Obtaining meaningful labels, however, is challenging due to
-the shear number of possibilities of feasible configuration sets. A
-reinforcement learning approach requires defining an appropriate reward
+configuration sets \cite{wu2006parking, true2007vacant}. 
+Obtaining meaningful labels when parking spots are not marked, however, is
+challenging due to the shear number of possibilities of feasible configuration
+sets. A reinforcement learning approach requires defining an appropriate reward
 function, which brings us back to the problem of what defines a good parking
 spot. We take a heuristics-based approach to develop a potential (reward)
-function that is exhaustively evaluated for every configuration.
-This obtains a full potential function for the state space, instead of a single
-state. The best state may be chosen by taking the state with the maximum
-potential.
+function that is exhaustively evaluated for every configuration. This obtains a
+full potential function for the state space, instead of a single state. The best
+state may be chosen by taking the state with the maximum potential.
 
 A good potential function will satisfy the following properties
 \begin{itemize}
