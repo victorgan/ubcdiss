@@ -17,142 +17,46 @@
 \chapter{Introduction}
 \label{ch:Introduction}
 
+Consider these situations:
+\begin{enumerate}
+\item There is a gathering of wheelchair users in a ballroom of a long-term care
+facility. A user wishes to park its wheelchair so there is still room for other
+wheelchair users and for an entertaining event to happen in the centre of the
+floor.
+\item A car must decide where to park in an unmarked lot -- perhaps the lot is
+grass, dirt or snow-covered.
+\item A general 2D packing problem, where we would like to pack as many
+arbitrarily-shaped objects into a container that itself is arbirarily shaped. We
+are able to rotate the objects to any angle.
+\end{enumerate}
 
+In all three situations, where would one place the wheelchair, car or object in
+a given area? In each case, the exact criteria to consider may vary, but many
+similarities exist.  Good placements may accomodate room for subsequent
+wheelchairs, cars and objects. Perhaps objects are best placed so they do not
+block previously placed objects from being able to leave the space. Perhaps
+objects placements are best when packed tightly into spaces, locally aligned
+with objects around it, minimizing space in the cracks between objects. And,
+perhaps placements should be as close to the object's current position as
+posssible to minimize wheeling effort or fuel cost.
 
-
-\section{The Impact of Autonomous Wheelchairs}
-
-% Purpose: Motivate the need of an autonomous back-in parking system.
-
-With the number of US citizens over the age of 65 expected to grow by 75\% by
-2030 \cite{simpson2008many}, ensuring older adults maintain their sense of
-mobility becomes increasingly important.
-For residents in long-term care facilities, independent mobility is directly
-related to their quality of life and sense of freedom, choice and independence
-\cite{bourret2002meaning}.
-For people of any age, loss of independent mobilitiy leads to feelings of
-emotional loss, reduced-self esteem, isolation, stress and fear of abandonment
-\cite{finlayson2003experiencing}, and decreases opportunities to socialize that
-lead to anxiety and depression \cite{iezzoni2001mobility}. 
-
-Wheelchairs offer a solution, but many users find operating existing manual or
-powered wheelchairs (PWCs) difficult or impossible \cite{simpson2008many}.
-10\% of patients who receive PWC training find it extremely difficult or
-impossible to use the wheelchair for activities of daily living, and
-when asked specifically about steering and maneuvering tasks, the
-percentage jumps to 40\% \cite{fehr2000adequacy}.
-Fehr et al. \cite{fehr2000adequacy} concludes improving steering interfaces is
-not enough due to the type of impairments the users face, and autonomous
-navigation is necessary. Half of patients unable to normally control a powered
-wheelchair would benefit from an automated navigation system.
-This population that stands to benefit is significant:
-In 2008, 1.4 to 2.3 million people in the US were estimated to
-benefit from powered wheelchairs with some autonomous functions, and of those
-973,000 to 1.7 million will benefit particularly from autonomous
-navigation capabilities with a growth rate of 5.9\% per year \cite{simpson2008many}.
-Powered wheelchairs (PWCs) with autonomous maneuvering capabilities are both
-necessary and will directly improve the quality of life of millions of people.
-
-Complete PWC automation, however, is not suitable. 
-A totally autonomous system may deprive a user's feeling of being in control 
-\cite{viswanathana2014wizard}.
-Older adults preferred robot assistance over human assistance for tasks related
-to chores, manipulating objects, and information management, but not personal
-care and leisure activities \cite{smarr2014domestic}.
-Instead, task-specific autonomous routines is preferable, akin to automatic
-parallel parking or cruise control in a car.
-Some work has been done on task-specific autonomous PWC behaviours, including
-navigation in crowded environments \cite{prassler2001robotics}, obstacle
-avoidance \cite{viswanathan2012navigation}, and docking onto lift platforms
-\cite{sermeno2006vision} and custom-designed beds \cite{ren2012docking}.
-More general overviews of smart wheelchair systems have also been described
-\cite{viswanathan2012navigation, simpson2005smart, faria2013patient}. 
-
-One common task is back-in parking [TODO bikram thesis/pooja's draft]. 
-% Not much in general back-in parking, a very common task in the target demographic
-Little work has been done to dock/back-in park a wheelchair in a more general
-environment, such as an indoor office or a room in a long-term care facility. 
-
-This motivates the application of the work in this thesis:
-we focus on automating the back-in parking task for a PWC, a specific task that
-has been proven desirable and helpful to be automated.
-
-% \section{Motion Planning with Ill-Defined Goal States}
-% 
-% Lots of work has been done to determine a path given a goal state/set. This
-% assumes a goal set has been previously defined.
-% 
-% Lots of work has been done on determining objects, scenes. But little work has
-% been done to combine the two: Determinine a suitable goal state that takes into
-% account feasibility and choosing a goal state that is present in the scene. 
-% 
-% This is closely related to developing a potential function: a pseudo-metric that
-% defines how close you are to a goal. Our work skips the 'given a goal state,
-% design a potential function' step, and develops a potential field as a
-% by-product of generating goal states.
-% 
-% Often it makes sense to have a fixed goal set, or one goal state. If your robot
-% wants to reach the fridge, having the location of the fridge is an appropriate
-% goal.
-% We do away with the notion that there is a fixed goal set. Often the goal set is
-% fuzzy, we do not know much about it. Instead, we form a desirability function
-% (which can be seen as a negative potential field) over the configuration space.
-% We then plan to reach a high level in the desirability function given certain
-% constraints.
-% 
-% Take, for example, the problem of placing a robot to rest for a night. Where
-% should you place it? In most cases there isn't a correct answer. There is no
-% well-defined goal state. There are also constraints that must be satisfied:
-% obstacle avoidance, minimum path length. Instead of posing the problem as path
-% planning towards an arbitrary goal state, we pose it as steering the robot to an
-% incrementally better configuration.
-% 
-% It's often assumed you can see what your goal state is like. There are a lot of
-% times a goal state isn't defined by what it looks like, but by the context
-% surrounding it: perhaps it is an enclosed space that fits the robot just right.
-
-
-\section{Problem Definition}
-How does a machine command a wheelchair to back-in park? We decompose this into two
-tasks, identifying a parking spot and moving into the identified parking spot,
-for modularity and for the solutions to be transferable to a large range of
-topics.
-Identifying a parking spot begs many questions:
-\begin{itemize}
-\item How do you define a parking spot?
-\item How do you determine feasible parking spots around you?
-\item How do you predict which parking spot the user has in mind, if there is any?
-\item What makes some spots better than others, and in what situations?
-\item What has already been done?
-\item How can one answer these questions in a solution that is 
-computationally efficient or even real-time?
-\end{itemize}
-
-In this thesis I focus on two of these questions: how do you define a place to
-park on an open floorspace, how do you back into said parking spot.
-
-This thesis introduces a method that infers a belief over possible goal states
-and uses visual servoing to incrementally plan and move a robot to a more
-desirable state. The method runs in real-time, only relies on an RGBD camera
-mounted relatively upwards facing and horizontal and without needing odometry,
-and is robust to large errors on robot and control models. Our main
-contributions are:
+This thesis address the problem of how to autonomously decide where to
+place an object in an open floorspace, with specific application to the first
+situation mentioned: identifying suitable parking spots for back-in parking of
+powered wheelchairs in long term care facilities. 
+\autoref{ch:background} describes the background of the problem in more detail.
+Specifically, my contributions are:
 
 \begin{itemize}
-\item An obstruction-minimizing heuristic to discriminate
-between robot placements
-\item An efficient general method for combining two distance transforms using
-(+,min)-convolutions
-\item A memory-free, anytime fast-loop visual feedback motion planning framework
-robust to model errors
-\item Combining the above, introducing a new framework that elegantly couples
-goal state inference, mapping and control in real-time
+\item A formulation of a value function that aims to characterize the robot's
+unobtrusiveness, which is used determine where to place robots on an obstacle
+map.  This is introduced in \autoref{ch:identify}.
+\item An efficient linear-time algorithm of the value function that generalizes to
+performing $(+,\min)$-convolutions over two distance transforms, also seen in \autoref{ch:identify}.
+\item A real-world application using the value function as a goal state for a
+back-in parking task with an RGBD camera and inexact control models,
+as shown in \autoref{ch:wheelchair}.
 \end{itemize}
-
-Chapter X describes background and preliminary notation used. Chapter Y
-describes etc.
-Often determining the goal state, localization/mapping, planning and movement
-are all done separately. We introduce an all-in-one solution.
 
 
 

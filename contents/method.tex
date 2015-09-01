@@ -1,5 +1,6 @@
 % ====================
-\chapter{Identifying a Parking Spot}
+\chapter{Object Placement to Minimize Obstructions}
+\label{ch:identify}
 % ====================
 
 % • In a paper you MUST provide the details, but FIRST convey the idea
@@ -18,306 +19,16 @@
 % • Evidence can be: analysis and comparison, theorems, measurements, case
 % studies
 
-% ====================
-\section{Problem formulation}
-% ====================
-We address the problem of determining a parking spot for a wheelchair.
-Specifically, we are concerned with identifying where in a room should a
-wheelchair be placed that minimizes inconvenience and obstructions and best
-coincides with human preference.
-
-[TODO figure]
-Let us start with examples to illustrate the problem and some desirable
-properties.
-Figure X shows an example floor plan, with various objects of different sizes
-and locations: other wheelchairs, tables, chairs and cabinets. We would like to
-find location to place the wheelchair, in green.  Figure A shows one scenario:
-we would prefer placing the wheelchair in a corner out of the way, rather than
-in the middle of an open floor which may obstruct people's movements.  In group
-gatherings at long-term care facilities, wheelchairs tend to be packed along the
-sides of a room.
-Figure B
-shows another: we would like to place the wheelchair to allow for a additional
-wheelchairs to be placed beside it. This makes more efficient use of space.
-Figure C shows that we would like to place wheelchairs only in places that can
-be reached, and to find a parking spot with orientations aligned with walls, to
-also make the most of the given space.
-
-We start with the following assumptions:
-\begin{itemize}
-\item Objects in the room are typical to indoor office environments. These
-include but are not limited to: chairs, other wheelchairs, tables and cabinets.
-\item Objects will be static/non-moving
-\item The floor will be flat throughout (i.e. no ramps)
-\item The user will have pre-moved their wheelchair to direct the camera to the
-general area of where they wish to park. This avoids dealing with shared control
-directly; the user's intentions are given a priori through the current
-wheelchair position.
-\item Subsequently, a
-parking spot is entirely in view of the sensor, with no objects obstructing any
-part of the parking spot. This assumption may not hold for parking spots in
-tight corners.
-\end{itemize}
-
-
-\subsection{Characteristics of a good parking spot}
-\begin{itemize}
-\item Minimize 'useless' space, space that another wheelchair cannot fit in 
-\item minimize tight spaces, holes, blockades
-\item be parallel/perpendicular to walls
-\item must be reachable from the current location in a reasonable amount of
-time: one smooth motion instead of many iterations of forward/reversing
-\item related: takes into account non-holonomic constraints
-\item maximize usable free space, minimize wasted space
-\item maximize the amount of contiguous space: space that is wide open is more
-desirable
-\item ensure wheelchair's 'safety': a margin of error, the parking spot
-shouldn't be directly touching any objects
-\end{itemize}
-
-We return to these characteristics during evaluation in section [TODO], where we
-develop quantatitive measures.
-
-
-
-\subsection{Our Approach}
-
-[TODO clean up]
-We formulate the problem by creating a belief over the state space
-that characterizes the desirability of the state as a parking spot.
-TODO reinforcement learning terminology.
-
-% value function
-% quality function
-% reward function
-
-\begin{figure}
-\centering
-\includegraphics[width=3in]{figures/rgbdmap.png}
-\caption{(TODO larger image) Pipeline for choosing a suitable parking spot.
-The transition from point cloud data to a 2D environment map is described in
-\autoref{sec:processingPointCloud} and \autoref{sec:2dmap}. Generating feasible configurations from the
-environment map is described in \autoref{sec:feasibleparkingspot}. Selecting one
-of the feasible configurations is described in
-\autoref{sec:choosingparkingspot}.}
-\label{fig:rgbdmap}
-\end{figure}
-
-\autoref{fig:rgbdmap} shows the general pipeline of the approach taken. The
-point cloud data is transformed into a 2D environment map consisting of objects,
-ground (free space), and unknown space. From this, the set of feasible
-wheelchair configurations are determined, and a heuristic-based desirability
-function is applied to choose an appropriate configuration from the feasible set.
-
-
-
-
+\section{Design Goals}
+We wish to identify a configuration of an object given an obstacle map.
+Formally, (state spaces of each)
 
 % ====================
-\section{Preprocessing the Point Cloud}
-\label{sec:processingPointCloud}
-% ====================
-To make a map, we are inspired by the approaches of Holz \cite{holz2013towards}
-and Gritti \cite{gritti2014kinect} to detect obstacles based on their height
-from the ground plane. This allows detection of obstacles regardless of
-their shape.
-
-% One may argue: why not go directly from RGB-D sensor data to classification of
-% parking spots, instead of a pipeline approach?
-% First, we will see that ground detection is fairly robust and computationally
-% cheap: there is very little error in this preprocessing step.
-% Second, RGB-D data varies quite a bit; there is no clear mapping from RGB-D
-% point clouds to location of parking spots. A learning approach would require an
-% overbearing amount of training examples.
-
-First, the point cloud is downsampled using a voxelized grid approach with a 5 cm
-grid filter. This reduces the computational load and prevents excess weighting of
-certain volumes in the upcoming ground plane detection.
-Next, we estimate the parameters of a ground plane. 
-The ground plane is needed for two reasons: it allows a 2D map to be easily
-created aligned to the ground plane (\autoref{sec:2dmap}), and allows an
-obstacle to be characterized by points above a certain distance above
-the ground plane.
-Multiple methods exist, including RANSAC \cite{fischler1981random}, the Hough
-transform, and M-estimators \cite{holz2013towards}. We use a modified version
-of RANSAC. 
-
-Ground plane detection is done on each frame independently for robustness to
-changing angles of the camera.
-Algorithm \autoref{alg:modifiedRansac} shows the modified version of RANSAC.
-Which ingests a point cloud $P$ of $n$ points in $\mathbb{R}^3$, and three
-parameters: $k$, the number of iterations of testing a a new plane, $t$, the
-threshold in metres in which points are considered part of the plane, and
-$\theta_{max}$, the maximum inclination angle of possible ground planes.
-Point cloud $P$ follows the format of a point cloud from an RGBD camera acquired
-using the `openni2\_camera' package in ROS. This means the positive y-axis is
-pointed roughly upwards in world coordinates, with the positive z-axis pointing
-away from the camera along the horizontal plane of the camera.
-
-The result is a ground plane represented as a 4-tuple $(a,b,c,d)$ satisfying
-$ax + by + cz + d = 0$. Lines 7-9 highlight the additional constraint to avoid
-detecting vertical planar surfaces (i.e. walls). Lines 16-18 ensure the ground
-plane has a normal vector pointing upwards in the world space, standardizing any
-ambiguity in defining a plane.
-
-\begin{algorithm}
-\caption{Modified RANSAC}
-\label{alg:modifiedRansac}
-\begin{algorithmic}[1]
-\Require{
-$k$ is the number of iterations to run, P are points in $\mathbb{R}^3$ with the
-positive $y$ axis roughly vertical upwards, $\theta_{max}$ is the maximum
-inclination angle, $t$ is the threshold used to identify if a point fits the
-plane}
-\Statex
-\Function{ModifiedRANSAC}{$k, P, \theta_{max}, t$}
-    \State $n \gets 3$, the minimum number of points to specify a plane
-    \State $d \gets 0$, the number of points that lie on the current best plane
-    \For{$k$ iterations}
-        \State Draw a sample of $n$ non-collinear points from $P$ uniformly at random
-        \State $l \gets$ the plane that includes all $n$ points
-        \If{the angle between the x-z axis and plane $l$ is greater than $\theta_{max}$}
-            \State the plane is too steep, continue to the next iteration
-        \EndIf
-        \State Find the subset of points $p \in P$ such that all points in $p$ are
-        within distance $t$ from plane $l$
-        \If{$|p| > d$}
-            \State $bestPlane \gets l$, the current best ground plane candidate.
-            \State $d \gets |p|$
-        \EndIf
-    \EndFor
-    \If{the vector normal to $bestPlane$ has a negative $y$ coeficcient}
-        \State flip the sign of the $y$ coefficient of $bestPlane$ 
-    \EndIf
-\EndFunction
-\Statex
-\Ensure{$bestPlane$, a 4-tuple $(a,b,c,d)$ that satisfies $ax + by + cz + d =
-0$ representing the ground plane}
-\end{algorithmic}
-\end{algorithm}
-
-
-We then rotate the point cloud $P$ to $P_{rotated}$ so the ground plane is
-aligned with the x-y plane, the z-axis points upwards, the y-axis is the
-direction the camera is facing, and the x-axis is chosen to complete the
-right-handed reference frame. Doing so allows $P_{rotated}$ to be trivially
-projected onto the ground plane.
-
-\autoref{fig:pointclouds} shows an
-example of the original point cloud $P$, where the positive z-axis is the
-direction of depth from the camera, the y-axis points upwards in the world
-frame, and the x-axis completes a right-handed reference frame. The detected
-ground plane using Algorithm \ref{alg:modifiedRansac} is shown. The rotated
-point cloud $P_{rotated}$ is shown on the right, with the ground plane aligned
-with the x-y plane.
-
-\begin{figure}
-\centering
-\includegraphics[width=6in]{figures/pointclouds.png}
-\caption{Left: point cloud obtained from the RGBD sensor. Middle:
-Downsampled point cloud with ground plane detected. Right: Rotated point cloud.}
-\label{fig:pointclouds}
-\end{figure}
-
-% ====================
-\section{Generating a 2D Map}
-\label{sec:2dmap}
-% ====================
-We generate a 2D Map by projecting the 3D ground-aligned point cloud onto the
-ground plane.
-We classify each position on the 2D map as an object, the ground, or unknown.
-Object and unknown classes are separated for use in
-\autoref{sec:choosingparkingspot}.
-
-Algorithm \autoref{alg:groundmapprojection} shows how the point cloud is
-converted to a 2D map. It takes in the ground-aligned point cloud $P_{rotated}$
-and two parameters: $gridStepSize$, a scalar in metres per pixel representing
-the resolution of the map, and $groundThreshold$, the max height in metres that
-a point can be considered part of the ground. This should be roughly the same
-order of magnitude of $t$ from Algorithm \ref{alg:modifiedRansac}.
-
-Let $p = (x_p, y_p, z_p) \in P_{rotated}$ be a of point in $\mathbb{R}^3$, with
-$z_p$ representing the height above the ground for each point. Lines X to Y show
-2D histograms are initialized to capture the location of ground and object
-points. The histogram bounds are defined by taking the extremum points in both
-the x and y dimensions.
-
-
-
-
-A Gaussian blur with
-a standard deviation of 0.7 is applied to filter out holes due to noise and
-include a safety buffer. This is binarized on lines 12 and 13 by thresholding at
-zero, resulting in a binary object map.
-Similarly, the 2D ground histogram is binarized on lines 14 and 15 by first applying a Gaussian
-blur with a standard deviation of 0.5 and thresholding at zero. 
-Additionally, a 1m circle around the origin of the camera is assumed to be
-viable positions in the ground map, which accounts for the minimimum range of
-the RGBD camera. This is needed to ensure connectivity between the origin state
-and farther feasible states, needed on line 2 in algorithm
-\autoref{alg:feasibilitycheck}.
-
-TODO talk about morphological dilation and erosion.
-
-In a conservative fashion, any true pixels in the ground map that share a true
-value in the object map is set to false, making the set of ground pixels and
-object pixels mutually exclusive. 
-% A third map is created for pixels that are not classified as a ground or object;
-% hence each pixel must be classified as either on the ground plane, an object, or
-% unknown.
-
-\begin{algorithm}
-\caption{TODO Ground Map Projection}
-\label{alg:groundmapprojection}
-\begin{algorithmic}[1]
-\Require{$P_{rotated}$, $gridStepSize$, $groundThreshold$}
-\Statex
-\Function{GroundMapProjection}{$P_{rotated}, gridStepSize, groundThreshold$}
-    \State $LB_x = \min_{p \in P_{rotated}}(x_p)$
-    \State $UB_x = \max_{p \in P_{rotated}}(x_p)$
-    \State $LB_y = \min_{p \in P_{rotated}}(y_p)$
-    \State $UB_y = \max_{p \in P_{rotated}}(y_p)$
-    \State $groundMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
-    \State $objectMap$, a 2D Histogram with bins spaced $gridStepSize$ metres apart
-    \For{each point $p \in P_{rotated}$}
-        \State $(x,y,z) \gets p$
-        \If{$z < groundThreshold$}
-            \State add $1$ to the appropriate $groundMap$ bin based on $(x,y)$
-        \Else
-            \State add $1$ to the appropriate $objectMap$ bin based on $(x,y)$
-        \EndIf
-    \EndFor
-    \State $objectMap \gets GaussianBlur(objectMap, \sigma_1)$
-    \State $objectMap \gets 1$ for each non-zero bin, $0$ otherwise
-
-    \State $groundMap \gets GaussianBlur(groundMap, \sigma_2)$
-    \State $groundMap \gets 0$ for each bin equal to zero and not already in $objectMap$, $1$ otherwise
-\EndFunction
-\Statex
-\Ensure{$groundMap$, a 2D boolean array with values of $1$ representing the
-ground, and $objectMap$}, a 2D boolean array with values of $1$ representing
-impassible objects.
-\end{algorithmic}
-\end{algorithm}
-
-\autoref{fig:groundobjectmap} shows an example of the resulting ground and
-object map.
-
-\begin{figure}
-\centering
-\includegraphics[width=5in]{figures/groundobjectmap.png}
-\caption{2D projection of the point cloud. Green (light gray on black and white)
-is classified as ground, red (medium gray) is classified as objects, and blue
-(dark gray) is classified as unknown, determined by Algorithm
-\autoref{alg:groundmapprojection}. The black pixel near the centre top
-represents the location of the wheelchair during time of capture.}
-\label{fig:groundobjectmap}
-\end{figure}
-
-% ====================
-\section{Finding Feasible Parking Configurations}
+\section{Preprocessing Finding Feasible Configurations}
 \label{sec:feasibleparkingspot}
 % ====================
+
+
 From a ground map and object map, a set of feasible configurations for the
 wheelchair are found. A wheel chair configuration is defined as $(x,y,\theta)$,
 where $(x,y)$ define the centre of the wheelchair in the 2D map coordinates of
@@ -356,6 +67,8 @@ Primitive transition curves of a differential drive system
 \cite{balkcom2002time} has been developed, but this assumes no objects present.
 The ease of computation justifies this choice.
 
+Piano mover's problem/ holonomic system.
+
 
 The third check ensures the entirety of the wheelchair falls within the bounds
 of the map. TODO better description.
@@ -382,12 +95,12 @@ feasible configurations of the wheelchair}
 \end{algorithm}
 
 % ====================
-\section{Choosing a Suitable Parking Configuration}
+\section{Choosing a Value Function to Maximizing Free Space Quality}
 \label{sec:choosingparkingspot}
 % ====================
-% --------------------
-\subsection{Formulation}
-% --------------------
+
+So
+
 Given the set of feasible parking spots, we must now choose one of them. What
 defines a good parking spot? One could pose this as a supervised learning
 problem, given many expert-labeled parking spots on different feasible
@@ -412,55 +125,6 @@ TODO place in a general framework
 We evaluate multiple approaches. We then determine performance based on an
 empirical evaluation.
 
-% --------------------
-\subsection{Min Convolutions}
-% --------------------
-From \cite{burcsi2010table}:
-Let $x = (x_0, x_1, ..., x_n)$ and $y = (y_0, y_1, ..., y_n)$ be one-dimensional
-vectors.
-A min-convolution (also known as the (min,+)-convolution) of $x$ and $y$ is the
-vector $x \star y = z = (z_0, z_1, ...,z_{2n})$
-with $z_m = min(x_i + y_{m-i})$, where the minimum is taken over all possible
-values of $i$. 
-In contrast, standard convolution, or (+,*)-convolution, is obtained if min is replaced by $\sum$ and
-$x_i + y_{m-i}$ by $x_i * y_{m-i}$ , i.e. 
-$z_m = \sum(x_i * y_{m-i})$
-
-What I want is (+,min)-convolution, $z_m = \sum min(x_i , y_{m-i})$
-
-I can do this by:
-making function A positive, function B negative.
-Apply min-convolution.
-making function A negative, function B positive.
-Apply min-convolution.
-do something else.
-
-
-The only special case we are aware of where a fast algorithm is known for
-rank-convolutions is the case when the mask is an axis-parallel box. This case
-is common in computer vision and image processing. Rank-convolutions in this
-case can be computed in O ( n log n) time; and min- convolution in O ( n) (Gil
-and Werman [15]) \cite{babai2009computing}.
-
-Computing min-convolutions when f is arbitrary but g is convex has received
-special attention because of its applications to sequence alignment [9] and to
-computing distance transforms of images [10]. As pointed out by Eppstein [9],
-the problem can be solved in O ( n) time by using the totally monotone matrix
-search algorithm of Aggarwal et al. [1].
-\cite{babai2009computing}
-
-Felzenszwalb and Huttenlocher [10] developed a different algorithm for the case
-when g is convex by noting the relationship between min-convolutions and
-lower-envelopes (minimum of a family of functions). The same approach can be
-used when g is concave. This algorithm runs in O ( n) time if an intersection
-point between shifted copies of g can be computed in constant time. In the worst
-case, binary search will find an intersection in O (log n) time, yielding an O (
-n log n) algorithm.
-\cite{babai2009computing}
-
-% --------------------
-\subsection{Algorithm A: Parking lots that maximize usable space}
-% --------------------
 Algorithm \autoref{alg:generatestatepotentials} shows how a score is given to each
 feasible configuration, where higher values correlate to more desirable parking
 spots. $w$ in line 3 is a boolean 2D array with values of $1$ representing the
@@ -515,12 +179,143 @@ different values for $\theta$. Blue (dark) represents low desirability, yellow
 \end{figure}
 
 % ====================
-\section{Efficiency}
+\section{Efficent Value Function Calculation}
 % ====================
-Efficiency of algorithms.
+% --------------------
+\subsection{Distance Transforms}
+% --------------------
+From \cite{felzenszwalb2004distance}:
+A distance transform of a binary image specifies the distance from each pixel to
+the nearest ``on" pixel. Distance transforms are an important tool in computer
+vision, image processing and pattern recognition.
+Let $P$ be a binary image. Then for each pixel $p$, the distance transform is
+defined as:
+
+$$\mathcal{D}_{g(x)}(p) = \min_{q \in g(x)} d(p,q) $$
+
+% --------------------
+\subsection{Sliding Window Distance Transforms}
+% --------------------
+We introduce a linear-time algorithm for solving a class of problems that involve
+calculating distance transforms with a sliding window. These problems can be
+viewed as constrained case of ($+$,$\min$)-convolutions of two distance
+transform functions. 
+$Y$ is the space of pixels.
+$P$ is a subset of $Y$ that is on.
+
+Let us define ($+$,$\min$)-convolutions as: (todo fix)
+
+$$ (f \oplus g) (x) = \sum_{x = -\infty}^\infty \min_{q \in [g(x) \cup f(x - p)]} d(p,q) $$
+
+
+We implement min-convolutions in an efficient way.
+Calculate the wheelchair distance transform for each configuration that's 2x as big in each dimension.
+Calculate the obstacle map distance transform.
+On a GPU for each configuration, select a subset of the distance transform that
+matches the (x,y) location, and element-wise min with the obstacle map DT, then
+take the sum. Selecting is constant time, $n$ mins is $n$ time, and sum is $n$
+time, making it run in $2n = O(n)$ time, where $n$ is the number of pixels. This
+is also easily parallelizable for each pixel, allowing for real-time operation.
+
+Like the FFT for ($+$,$\times$)-convolution (normal convolutions) and generalized distance
+transforms for constrained ($\min$,$+$)-convolutions, we introduce an efficient
+algorithm to calculate ($+$,$\min$)-convolutions of distance transforms,
+taking advantage of the following property of distance transforms:
+
+$$DT(X \cup Y) = \min(DT(X), DT(Y))$$
+
+Where $X$ and $Y$ are $n \times m$ binary images.
+We note that $DT(Y)$ is constant for all configurations, and can be stored in
+memory. $DT(X)$ varies for values of $X$, but we note that we can store a larger
+array of $X$ which stores the value of every configuration of $X$.
+
+% --------------------
+\subsubsection{Min Convolutions}
+% --------------------
+From \cite{burcsi2010table}:
+Let $x = (x_0, x_1, ..., x_n)$ and $y = (y_0, y_1, ..., y_n)$ be one-dimensional
+vectors.
+A min-convolution (also known as the (min,+)-convolution) of $x$ and $y$ is the
+vector $x \star y = z = (z_0, z_1, ...,z_{2n})$
+with $z_m = min(x_i + y_{m-i})$, where the minimum is taken over all possible
+values of $i$. 
+In contrast, standard convolution, or (+,*)-convolution, is obtained if min is replaced by $\sum$ and
+$x_i + y_{m-i}$ by $x_i * y_{m-i}$ , i.e. 
+$z_m = \sum(x_i * y_{m-i})$
+
+What I want is (+,min)-convolution, $z_m = \sum min(x_i , y_{m-i})$
+
+I can do this by:
+making function A positive, function B negative.
+Apply min-convolution.
+making function A negative, function B positive.
+Apply min-convolution.
+do something else.
+
+
+The only special case we are aware of where a fast algorithm is known for
+rank-convolutions is the case when the mask is an axis-parallel box. This case
+is common in computer vision and image processing. Rank-convolutions in this
+case can be computed in O ( n log n) time; and min- convolution in O ( n) (Gil
+and Werman [15]) \cite{babai2009computing}.
+
+Computing min-convolutions when f is arbitrary but g is convex has received
+special attention because of its applications to sequence alignment [9] and to
+computing distance transforms of images [10]. As pointed out by Eppstein [9],
+the problem can be solved in O ( n) time by using the totally monotone matrix
+search algorithm of Aggarwal et al. [1].
+\cite{babai2009computing}
+
+Felzenszwalb and Huttenlocher [10] developed a different algorithm for the case
+when g is convex by noting the relationship between min-convolutions and
+lower-envelopes (minimum of a family of functions). The same approach can be
+used when g is concave. This algorithm runs in O ( n) time if an intersection
+point between shifted copies of g can be computed in constant time. In the worst
+case, binary search will find an intersection in O (log n) time, yielding an O (
+n log n) algorithm.
+\cite{babai2009computing}
+
+\subsection{Empirical Runtime Evaluation}
+
+\begin{figure}
+\centering
+\includegraphics[width=5in]{figures/efficiency2.eps}
+\caption{Runtime algorithm X is optimized. } 
+\label{fig:desirabilityfunction}
+\end{figure}
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{@{}lllll@{}}
+States & A + GPU & B + GPU & A + CPU & B + CPU \\ \midrule
+9        & 0.005	& 0.005	& 0.002 & 0.001 \\
+25       & 0.007	& 0.006	& 0.002 & 0.001 \\
+36       & 0.016	& 0.013	& 0.005 & 0.003 \\
+81       & 0.022	& 0.018	& 0.007 & 0.004 \\
+144      & 0.045	& 0.039	& 0.015 & 0.007 \\
+289      & 0.081	& 0.066	& 0.027 & 0.012 \\
+529      & 0.163	& 0.134	& 0.054	& 0.023 \\
+1089     & 0.308	& 0.236	& 0.102	& 0.042 \\
+2116     & 0.670	& 0.489	& 0.241	& 0.089 \\
+4160     & 1.414	& 0.946	& 0.551	& 0.180 \\
+8372     & 2.794	& 1.871	& 1.436	& 0.418 \\
+16640    & 6.952	& 3.841	& 4.465	& 0.951 \\
+33304    & 16.99	& 7.819	& 13.10	& 2.541 \\
+65786    & 41.83	& 15.56	& 41.22	& 8.929 \\
+132120   & 116.5	& 31.38	& 145.3	& 25.63 \\
+262626   & 365.9	& 66.91	& 528.5	& 82.57 \\
+526294   & 1304	& 151.5	& 2053.	& 275.2 \\
+1050504  & 5492	& 376.8	& 7747	& 1084
+\end{tabular}
+\end{table}
+% ====================
+\section{Testing Placements on Real World Scenarios}
+% ====================
 
 % ====================
-\section{Data Set}
+\subsection{Data Set}
 \label{sec:rgbddataset}
 % ====================
 A data set of RGBD video is obtained by attaching an Asus Xtion Pro Live onto a
@@ -548,190 +343,33 @@ identify a suitable location within the image for back-in parking.}
 \end{figure}
 
 % ====================
-\section{Experiments}
+\subsection{Qualitative Results}
 % ====================
+5 scenes. For each: RGBD, Placement in Map, Placement in 3D point cloud.
 
-\subsection{Simulated Environments}
-Toy models: make images in photoshop:
-empty room,
-room with one object in the centre
-room with parking spaces aligned the back
-room with two objects in centre, with enough room in-between for a robot
-
-add rotations:
-non-axis-aligned parking spots
-
+% ====================
+\section{Testing Packing Performance}
+% ====================
 \subsection{Real-World Environments}
 
+\subsection{2D Knapsack Problem}
+
 % ====================
-\section{Related Work}
-\label{sec:parkinglotidentificationlitreview}
+\section{Extension: Placing Wheelchairs so all previous wheelchairs can exit}
 % ====================
-Detecting a parking spot poses an interesting problem. Unlike a standard object
-detection pipeline, a parking spot is not determined by the appearance of an
-object, but by the presence of negative space within an area. The context of the
-scene also determines where an adequete parking spot should be. In this way, an
-ideal parking spot is not purely identifiable by the features within it; but
-instead is determined by contextual cues surrounding it.
 
-
-\subsection{Outdoor Parking Lot Detection}
-
-Many methods formulate the problem of identifying a parking spot
-as a detection problem, where a parking spot is to be detected within the scene
-using supervised classification techniques.
-
-Work has been done to determine locations of parking spots for cars in car lots
-[citations]. 
-\cite{wu2006parking, true2007vacant}
-
-Suhr \cite{suhr2010automatic} detects parking spaces in a similar way to ours.
-They detect parking spaces by first detecting neighbouring cars using geometric
-constraints. Our method, in contrast, does not require such hardcoded
-constraints.
-
-
-Many of these techniques rely on the presence of parking spot
-lines, and use line detection algorithms to do so. Once the parking spot is
-found, a support vector machine is trained on empty and occupied parking spots.
-
-These methods rely on accurate identification based on line markings, which are
-not present in indoor environments not purely dedicated to parking. 
-
-Formulating the problem as a classification problem is then harder, as
-classification must be done on any feasible area instead of just a set number of
-pre-identified parking spots.
-
-These algorithms also do not address which of the found parking spots to choose:
-in a car parking lot, one spot dominates the camera due to the close proximity
-of the car to the spots. However, in an indoor wheelchair environment, many
-parking lots exists.
-
-TODO researchlog/thesis.org for references.
-
-Many techniques using location-tailored hardware to detect free parking spaces
-in car parking lots, involving wireless sensors \cite{panja2011wirelessly},
-pre-existing security cameras \cite{true2007vacant} and magnetic field detectors
-\cite{boda2007design}. In contrast, our method aims to detect free parking
-spaces with only sensors onboard the wheelchair: no external sensors and even no
-external pre-determined parking lot spots.
-
-
-\subsection{Packing Problems}
-This problem also has similarities to packing problems \cite{dyckhoff1990typology}.
-
-The general packing
-problem tries to, given a set of rectangular objects, pack as many as possible
-in a larger rectanle. In our case, we are given one wheelchair, and we may wish
-to pack it in a space that is least obstrusive to other areas.
-
-Pallet loading problem \cite{martins2008solving}:
-Pallet Loading Problem (PLP). PLP max- imizes the number of boxes placed on a
-rectangular pallet. All boxes have identical rectangular dimensions and, when
-placed, must be located completely within the pallet. Boxes may be rotated 90°
-so long as they are placed with edges par- allel to the pallet’s edges. The set
-of all PLP instances with an area ratio (pallet area divided by box area) less
-than 101 boxes can be represented by 3,080,730 equivalent classes.
-
-
-TODO researchlog/thesis.org for references.
-
-
-% *** Packing Problems
-% This is a problem in operations research.
-% 
-% http://en.wikipedia.org/wiki/Packing_problems
-% http://www.codeproject.com/Articles/210979/Fast-optimizing-rectangle-packing-algorithm-for-bu
-% Problem: In the visible ground, pack as many wheelchairs as possible in it, and then find the best position
-% - pack as densely as possible: maximize 'walkable space': space connected to free space
-% - constraints: each wheelchair must be able to reach the parking spot
-% 
-% "Computational Packing Problem"
-% http://scholar.google.ca/scholar?q=computational+packing+problem&hl=en&as_sdt=0&as_vis=1&oi=scholart&sa=X&ei=DYxKVeqHHdCNoQT684Eg&ved=0CBsQgQMwAA
-% 
-% file:papers/hopper2000empirical.pdf
-% file:papers/martello2000three.pdf
-% 
-% Looks like state-of-art:
-% http://www.ijcai.org/papers09/Papers/IJCAI09-092.pdf
-% 
-% I can frame my problem as such:
-% - Packing problem, rectangles in arbirtary container
-% - with additional constraint of feasability to go from current configuration to target configuration
-% 
-% *** Tetris Problems
-% https://luckytoilet.wordpress.com/2011/05/27/coding-a-tetris-ai-using-a-genetic-algorithm/
-% - penalize holes
-% - penalize blockades
-% 
-% **** Tetris is hard, even if the sequence is known
-% http://en.wikipedia.org/wiki/Tetris#Computational_complexity
-
-
-\subsection{Choosing the best parking spot}
-\cite{bogoslavskyi2015where} identifies where best to park using an MDP?.
-
-This addresses the issue of how best to choose a parking spot given multiple
-candidates. However, it does not work over continuous space, which is what we
-have.
-
-\subsection{Choosing the best parking spot, game-theoretic approaches}
-Given locations of free car parking spots in a city, Ayala et al.
-\cite{ayala2011parking} attempts to choose the ideal parking spot location
-in a game-theoretic framework. TODO READ.
-\cite{ayala2012parking}
-
-\cite{mejri2014cooperation} uses performance metrics: average distance between
-the vehicle and assigned slot, and others.
-
-\cite{alfonsetti2014semi} states: 
-As a result, almost all existing methods for parking slot assignment are simple
-and greedy approaches, where each car is assigned a free parking slot, which is
-closer to its destination. Moreover, no emphasis is placed to optimize the
-social benefit of the users during the parking slot assignment. 
-
-\subsection{Path planning with ill-defined goal states}
-"Path Planning on Grid Maps with Unknown Goal Poses"
-
-Quote from \cite{javdani2015shared}:
-Maximum  entropy  inverse  optimal  control  (MaxEnt  IOC)
-methods  have  been  shown  to  be  effective  for  goal  predic-
-tion [28, 29, 30, 7]
-
-Quote from \cite{javdani2015shared}:
-Others have approached the prediction problem by utilizing
-various machine learning methods. Koppula and Saxena [15]
-extend  conditional  random  fields  (CRFs)  with  object  affor-
-dances  to  predict  potential  human  motions.  Wang  et  al.  [23]
-learn  a  generative  predictor  by  extending  Gaussian  Process
-Dynamical Models (GPDMs) with a latent variable for inten-
-tion. Hauser [11] utilizes a Gaussian mixture model over task
-types  (e.g.  reach,  grasp),  and  predicts  both  the  task  type  and
-continuous  parameters  for  that  type  (e.g.  movements)  using
-Gaussian mixture autoregression.
-
-\subsection{Shared Control}
-Hindsight optimization to choose and move between goal states
-\cite{javdani2015shared}.
-
-Quote from \cite{javdani2015shared}:
-Recently,  Hauser  presented  a  system  which  provides
-assistance  while  reasoning  about  the  entire  distribution  over
-goals.  Given  the  current  distribution,  the  planner  optimizes
-for  a  trajectory  that  minimizes  the  expected  cost,  assuming
-that no further information will be gained. After executing the
-plan for some time, the distribution is updated by the predictor,
-and a new plan is generated for the new distribution. In order
-to  efficiently  compute  the  trajectory,  it  is  assumed  that  the
-cost function corresponds to squared distance, resulting in the
-calculation decomposing over goals. In contrast, our model is
-more  general,  enabling  any  cost  function  for  which  a  value
-function  can  be  computed.  Furthermore,  our  POMDP  model
-enables us to reason about future human actions.  \cite{hauser2013recognition}
 
 % ====================
 \section{Conclusion}
 % ====================
+
+We show our algorithm qualitiatively places objects in spots that minimizes
+obstructions.
+
+We formulate an algorithm for efficient computation of the value function, which
+is runs in less than 10 seconds.
+
+Performs well as a greedy packing problem heuristic.
 
 % ======================
 \endinput
